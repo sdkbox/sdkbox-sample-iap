@@ -1,6 +1,8 @@
 
 var HelloWorldLayer = cc.Layer.extend({
     sprite:null,
+    txtCoin:null,
+    menuIAP:null,
     ctor:function () {
         //////////////////////////////
         // 1. super init first
@@ -31,24 +33,87 @@ var HelloWorldLayer = cc.Layer.extend({
     },
 
     createTestMenu:function() {
-        var item1 = new cc.MenuItemLabel(new cc.LabelTTF("Test Item 1", "sans", 28), function() {
-            cc.log("Test Item 1");
+        sdkbox.IAP.init();
+        sdkbox.IAP.setDebug(true);
+        sdkbox.IAP.setListener({
+            onSuccess : function (product) {
+                //Purchase success
+                cc.log("Purchase successful: " + product.name)
+            },
+            onFailure : function (product, msg) {
+                //Purchase failed
+                //msg is the error message
+                cc.log("Purchase failed: " + product.name + " error: " + msg);
+            },
+            onCanceled : function (product) {
+                //Purchase was canceled by user
+                cc.log("Purchase canceled: " + product.name);
+            },
+            onRestored : function (product) {
+                //Purchase restored
+                cc.log("Restored: " + product.name);
+            },
+            onProductRequestSuccess : function (products) {
+                self.menuIAP.removeAllChildren();
+                //Returns you the data for all the iap products
+                //You can get each item using following method
+                for (var i = 0; i < products.length; i++) {
+                    cc.log("================");
+                    cc.log("name: " + products[i].name);
+                    cc.log("price: " + products[i].price);
+                    cc.log("================");
+
+                    var btn = new ccui.Button(res.button_png);
+                    btn.name = products[i].name;
+                    btn.addClickEventListener(function(){
+                      sdkbox.IAP.purchase(btn.name);
+                    });
+                    self.menuIAP.addChild(btn);
+                }
+            },
+            onProductRequestFailure : function (msg) {
+                //When product refresh request fails.
+                cc.log("Failed to get products");
+            }
         });
 
-        var item2 = new cc.MenuItemLabel(new cc.LabelTTF("Test Item 2", "sans", 28), function() {
-            cc.log("Test Item 2");
+        var size = cc.winSize;
+
+        var ui = ccs.load(res.MainScene_json);
+        this.addChild(ui.node);
+
+        var btnLoad = ui.node.getChildByName("btnLoad");
+        btnLoad.addClickEventListener(function(){
+          sdkbox.IAP.refresh();
         });
 
-        var item3 = new cc.MenuItemLabel(new cc.LabelTTF("Test Item 3", "sans", 28), function() {
-            cc.log("Test Item 3");
+        var btnRestore = ui.node.getChildByName("btnRestore");
+        btnRestore.addClickEventListener(function(){
+          sdkbox.IAP.restore();
         });
 
-        var winsize = cc.winSize;
-        var menu = new cc.Menu(item1, item2, item3);
-        menu.x = winsize.width / 2;
-        menu.y = winsize.height / 2;
-        menu.alignItemsVerticallyWithPadding(20);
-        this.addChild(menu);
+        this.menuIAP = ui.node.getChildByName("menuIAP");
+
+        this.txtCoin = ui.node.getChildByName("txtCoin");
+
+        // add a "close" icon to exit the progress. it's an autorelease object
+        var closeItem = new cc.MenuItemImage(
+            res.CloseNormal_png,
+            res.CloseSelected_png,
+            function () {
+                cc.log("Menu is clicked!");
+            }, this);
+        closeItem.attr({
+            x: size.width - 20,
+            y: 20,
+            anchorX: 0.5,
+            anchorY: 0.5
+        });
+
+        var menu = new cc.Menu(closeItem);
+        menu.x = 0;
+        menu.y = 0;
+        this.addChild(menu, 1);
     }
 });
 
