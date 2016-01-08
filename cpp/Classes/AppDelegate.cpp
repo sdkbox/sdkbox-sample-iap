@@ -1,5 +1,8 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
+#ifdef SDKBOX_ENABLED
+#include "PluginIAP/PluginIAP.h"
+#endif
 
 USING_NS_CC;
 
@@ -23,6 +26,9 @@ void AppDelegate::initGLContextAttrs()
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
+#ifdef SDKBOX_ENABLED
+    sdkbox::IAP::init();
+#endif
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
