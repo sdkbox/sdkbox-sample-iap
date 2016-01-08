@@ -81,9 +81,9 @@
     <import file="${sdk.dir}/tools/ant/build.xml" />
 
     <target name="-pre-compile">
-        <!-- Redefine project.all.jars.path before -compile executes -->
-        <path id="project.all.jars.path">
-            <fileset file="./jars/*.jar" />
+        <!-- Redefine project.all.libs.path before -compile executes -->
+        <path id="project.all.libs.path">
+            <fileset file="./libs/*.jar" />
             <fileset file="${sdk.dir}/tools/support/*.jar" />
         </path>
     </target>
