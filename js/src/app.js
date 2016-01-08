@@ -33,6 +33,10 @@ var HelloWorldLayer = cc.Layer.extend({
     },
 
     createTestMenu:function() {
+        var self = this;
+
+        cc.MenuItemFont.setFontName("sans");
+
         sdkbox.IAP.init();
         sdkbox.IAP.setDebug(true);
         sdkbox.IAP.setListener({
@@ -63,13 +67,16 @@ var HelloWorldLayer = cc.Layer.extend({
                     cc.log("price: " + products[i].price);
                     cc.log("================");
 
-                    var btn = new ccui.Button(res.button_png);
-                    btn.name = products[i].name;
-                    btn.addClickEventListener(function(){
-                      sdkbox.IAP.purchase(btn.name);
-                    });
-                    self.menuIAP.addChild(btn);
+                    (function() {
+                        var name = products[i].name;
+                        var btn = new cc.MenuItemFont(name, function() {
+                            cc.log("purchase: " + name);
+                            sdkbox.IAP.purchase(name);
+                        });
+                        self.menuIAP.addChild(btn);
+                    }());
                 }
+                self.menuIAP.alignItemsVerticallyWithPadding(5);
             },
             onProductRequestFailure : function (msg) {
                 //When product refresh request fails.
@@ -79,41 +86,27 @@ var HelloWorldLayer = cc.Layer.extend({
 
         var size = cc.winSize;
 
-        var ui = ccs.load(res.MainScene_json);
-        this.addChild(ui.node);
-
-        var btnLoad = ui.node.getChildByName("btnLoad");
-        btnLoad.addClickEventListener(function(){
+        var btnLoad = new cc.MenuItemFont("load products", function(){
           sdkbox.IAP.refresh();
         });
 
-        var btnRestore = ui.node.getChildByName("btnRestore");
-        btnRestore.addClickEventListener(function(){
+        var btnRestore = new cc.MenuItemFont("restore purchase", function(){
           sdkbox.IAP.restore();
         });
 
-        this.menuIAP = ui.node.getChildByName("menuIAP");
+        var menu = new cc.Menu(btnLoad, btnRestore);
+        menu.x = size.width / 2;
+        menu.y = size.height - 140;
+        menu.alignItemsVerticallyWithPadding(5);
+        this.addChild(menu);
 
-        this.txtCoin = ui.node.getChildByName("txtCoin");
+        this.menuIAP = new cc.Menu();
+        this.addChild(this.menuIAP);
 
-        // add a "close" icon to exit the progress. it's an autorelease object
-        var closeItem = new cc.MenuItemImage(
-            res.CloseNormal_png,
-            res.CloseSelected_png,
-            function () {
-                cc.log("Menu is clicked!");
-            }, this);
-        closeItem.attr({
-            x: size.width - 20,
-            y: 20,
-            anchorX: 0.5,
-            anchorY: 0.5
-        });
-
-        var menu = new cc.Menu(closeItem);
-        menu.x = 0;
-        menu.y = 0;
-        this.addChild(menu, 1);
+        this.txtCoin = new cc.Label("0", "sans", 32);
+        this.txtCoin.x = size.width / 2;
+        this.txtCoin.y = 120;
+        this.addChild(this.txtCoin);
     }
 });
 
