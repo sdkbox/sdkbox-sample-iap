@@ -18,6 +18,7 @@ lua/frameworks/runtime-src/proj.android/assets/
 lua/frameworks/runtime-src/proj.android/obj/
 lua/frameworks/runtime-src/proj.android/bin/
 lua/frameworks/runtime-src/proj.android/gen/
+lua/frameworks/runtime-src/proj.android/libs/
 lua/simulator
 
 js/frameworks/runtime-src/proj.ios_mac/build
