@@ -1,5 +1,5 @@
 
-# How to run sdkbox samples
+# sdkbox IAP samples
 
 ## Getting Started
 
@@ -24,9 +24,6 @@ git clone --depth 1 https://github.com/sdkbox/sdkbox-sample-iap.git
 
 ~~~
 
-## Documentation
-For more information, check out the [SDKBOX IAP plugin](http://docs.sdkbox.com/en/plugins/iap/)
-
 Note:
 
 1.  Sample repo and cocos2dx repo must be in same level directory
@@ -38,3 +35,6 @@ Note:
 | +-- lua
 | \-- js
 ~~~
+
+## Documentation
+For more information, check out the [SDKBOX IAP plugin](http://docs.sdkbox.com/en/plugins/iap/)
