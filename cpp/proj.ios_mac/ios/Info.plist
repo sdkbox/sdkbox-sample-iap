@@ -10,8 +10,6 @@
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>Icon-57.png</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.sdkbox.sample.iap.cpp</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon-29</string>
@@ -48,6 +46,8 @@
 		<string>Icon-152</string>
 		<string>Icon-180</string>
 	</array>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -62,6 +62,11 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UIAppFonts</key>
 	<array/>
 	<key>UIPrerenderedIcon</key>
@@ -73,10 +78,5 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
 </dict>
 </plist>

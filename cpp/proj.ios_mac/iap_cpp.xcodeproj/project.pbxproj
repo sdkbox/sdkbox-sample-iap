@@ -391,6 +391,7 @@
 					"$(_COCOS_LIB_IOS_BEGIN)",
 					"$(_COCOS_LIB_IOS_END)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cocos2dx.PluginTest;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -434,6 +435,7 @@
 					"$(_COCOS_LIB_IOS_BEGIN)",
 					"$(_COCOS_LIB_IOS_END)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cocos2dx.PluginTest;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
