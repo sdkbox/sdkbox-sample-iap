@@ -1,7 +1,7 @@
 
 #include "SDKBoxLuaHelper.h"
 #include "tolua_fix.h"
-#include "Sdkbox/Sdkbox.h"
+#include "sdkbox/Sdkbox.h"
 
 #include <limits>
 
@@ -648,19 +648,33 @@ bool luaval_to_ccluavaluevector(lua_State* L, int lo, LuaValueArray* ret, const 
 }
 
 #if COCOS2D_VERSION <= 0x00030600
+void std_map_string_string_to_luaval(lua_State* L, const std::map<std::string, std::string>& inValue) {
+    if (nullptr == L) {
+        return;
+    }
+
+    lua_newtable(L);
+
+    for (std::map<std::string, std::string>::const_iterator iter = inValue.begin(); iter != inValue.end(); ++iter) {
+        lua_pushstring(L, iter->first.c_str());
+        lua_pushstring(L, iter->second.c_str());
+        lua_rawset(L, -3);
+    }
+}
+
 bool luaval_to_std_map_string_string(lua_State* L, int lo, std::map<std::string, std::string>* ret, const char* funcName) {
     if (nullptr == L || nullptr == ret || lua_gettop(L) < lo)
         return false;
-    
+
     tolua_Error tolua_err;
     bool ok = true;
     if (!tolua_istable(L, lo, 0, &tolua_err)) {
         ok = false;
     }
-    
+
     if (!ok)
         return ok;
-    
+
     lua_pushnil(L);
     std::string key;
     std::string value;
@@ -672,10 +686,78 @@ bool luaval_to_std_map_string_string(lua_State* L, int lo, std::map<std::string,
         } else {
             //CCASSERT(false, "string type is needed");
         }
-        
+
         lua_pop(L, 1);
     }
-    
+
     return ok;
 }
 #endif
+
+
+
+bool luatable_to_map_string_string(lua_State* L, int lo, std::map<std::string,std::string>* ret, const char* funcName)
+{
+    if ( nullptr == L || nullptr == ret)
+        return false;
+
+    tolua_Error tolua_err;
+    bool ok = true;
+    if (!tolua_istable(L, lo, 0, &tolua_err))
+    {
+        ok = false;
+    }
+
+    if (ok)
+    {
+        std::string stringKey = "";
+        std::string stringValue = "";
+        bool boolVal = false;
+        std::map<std::string,std::string>& dict = *ret;
+        lua_pushnil(L);                                             /* first key L: lotable ..... nil */
+        while ( 0 != lua_next(L, lo ) )                             /* L: lotable ..... key value */
+        {
+            if (!lua_isstring(L, -2))
+            {
+                lua_pop(L, 1);                                      /* removes 'value'; keep 'key' for next iteration*/
+                continue;
+            }
+
+            if(luaval_to_std_string(L, -2, &stringKey))
+            {
+
+                if(lua_istable(L, -1))
+                {
+                    // skip nested objects
+                }
+                else if(lua_type(L, -1) == LUA_TSTRING)
+                {
+                    if(luaval_to_std_string(L, -1, &stringValue))
+                    {
+                        dict[stringKey] = stringValue;
+                    }
+                }
+                else if(lua_type(L, -1) == LUA_TBOOLEAN)
+                {
+                    if (luaval_to_boolean(L, -1, &boolVal))
+                    {
+                        dict[stringKey] = boolVal ? "true" : "false";
+                    }
+                }
+                else if(lua_type(L, -1) == LUA_TNUMBER)
+                {
+                    char c[80];
+                    snprintf( c, sizeof(c), "%f",tolua_tonumber(L, -1, 0) );
+                    dict[stringKey] = std::string(c) ;
+                }
+            }
+
+            lua_pop(L, 1);                                          /* L: lotable ..... key */
+        }
+    }
+
+    return ok;
+}
+
+
+

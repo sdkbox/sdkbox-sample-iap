@@ -88,7 +88,10 @@ extern bool luaval_to_ccluavaluemap(lua_State* L, int lo, LuaValueDict* ret, con
 extern bool luaval_to_ccluavaluevector(lua_State* L, int lo, LuaValueArray* ret, const char* funcName = "'");
 
 #if COCOS2D_VERSION <= 0x00030600
+extern void std_map_string_string_to_luaval(lua_State* L, const std::map<std::string, std::string>& inValue);
 extern bool luaval_to_std_map_string_string(lua_State* L, int lo, std::map<std::string, std::string>* ret, const char* funcName);
 #endif
+
+bool luatable_to_map_string_string(lua_State* L, int lo, std::map<std::string,std::string>* ret, const char* funcName);
 
 #endif //__SDKBOX_LUA_HELPER_H__
