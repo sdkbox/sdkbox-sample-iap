@@ -1,3 +1,6 @@
+*.zip
+backup-*/
+
 .*
 contents.xcworkspacedata
 xcuserdata/
