@@ -1,6 +1,6 @@
 /****************************************************************************
 
- Copyright (c) 2014-2015 Chukong Technologies
+ Copyright (c) 2014-2016 SDKBOX Inc
 
  ****************************************************************************/
 
@@ -41,9 +41,18 @@ namespace sdkbox
 
         // Localized price
         std::string price;
-        
+
         // price currency code
         std::string currencyCode;
+
+        // cyphered payload
+        std::string receiptCipheredPayload;
+
+        // receipt info. will be empty string for iOS
+        std::string receipt;
+
+        // unique transaction id
+        std::string transactionID;
     };
 
     /**
@@ -87,11 +96,12 @@ namespace sdkbox
         * Called when the product request fails
         */
         virtual void onProductRequestFailure(const std::string& msg) = 0;
-        
+
         /**
          * Called when the restore completed
          */
         virtual void onRestoreComplete(bool ok, const std::string &msg) = 0;
+
     };
 
     class IAP
@@ -101,12 +111,17 @@ namespace sdkbox
         /**
         * Initialize SDKBox IAP
         */
-        static void init();
+        static void init(const char* jsonconfig = 0);
 
         /**
         * Enable/disable debug logging
         */
         static void setDebug(bool debug);
+
+        /**
+        * Get all the products
+        */
+        static std::vector<Product> getProducts();
 
         /**
         * Make a purchase request
@@ -134,6 +149,10 @@ namespace sdkbox
         * Remove listener for IAP
         */
         static void removeListener();
+
+
+        static void enableUserSideVerification( bool );
+
     };
 }
 

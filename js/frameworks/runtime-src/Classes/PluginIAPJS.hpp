@@ -44,6 +44,11 @@ bool js_PluginIAPJS_IAP_setDebug(JSContext *cx, uint32_t argc, jsval *vp);
 JSBool js_PluginIAPJS_IAP_setDebug(JSContext *cx, uint32_t argc, jsval *vp);
 #endif
 #if defined(MOZJS_MAJOR_VERSION)
+bool js_PluginIAPJS_IAP_enableUserSideVerification(JSContext *cx, uint32_t argc, jsval *vp);
+#elif defined(JS_VERSION)
+JSBool js_PluginIAPJS_IAP_enableUserSideVerification(JSContext *cx, uint32_t argc, jsval *vp);
+#endif
+#if defined(MOZJS_MAJOR_VERSION)
 bool js_PluginIAPJS_IAP_removeListener(JSContext *cx, uint32_t argc, jsval *vp);
 #elif defined(JS_VERSION)
 JSBool js_PluginIAPJS_IAP_removeListener(JSContext *cx, uint32_t argc, jsval *vp);

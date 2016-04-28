@@ -2,7 +2,7 @@
 #include "cocos2d_specifics.hpp"
 #include "PluginIAP/PluginIAP.h"
 #include "SDKBoxJSHelper.h"
-#include "sdkbox/sdkbox.h"
+#include "sdkbox/Sdkbox.h"
 
 
 #if defined(MOZJS_MAJOR_VERSION)
@@ -195,8 +195,17 @@ JSBool js_PluginIAPJS_IAP_refresh(JSContext *cx, uint32_t argc, jsval *vp)
 bool js_PluginIAPJS_IAP_init(JSContext *cx, uint32_t argc, jsval *vp)
 {
     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    bool ok = true;
     if (argc == 0) {
         sdkbox::IAP::init();
+        args.rval().setUndefined();
+        return true;
+    }
+    if (argc == 1) {
+        const char* arg0;
+        std::string arg0_tmp; ok &= jsval_to_std_string(cx, args.get(0), &arg0_tmp); arg0 = arg0_tmp.c_str();
+        JSB_PRECONDITION2(ok, cx, false, "js_PluginIAPJS_IAP_init : Error processing arguments");
+        sdkbox::IAP::init(arg0);
         args.rval().setUndefined();
         return true;
     }
@@ -206,8 +215,18 @@ bool js_PluginIAPJS_IAP_init(JSContext *cx, uint32_t argc, jsval *vp)
 #elif defined(JS_VERSION)
 JSBool js_PluginIAPJS_IAP_init(JSContext *cx, uint32_t argc, jsval *vp)
 {
+    jsval *argv = JS_ARGV(cx, vp);
+    JSBool ok = JS_TRUE;
     if (argc == 0) {
         sdkbox::IAP::init();
+        JS_SET_RVAL(cx, vp, JSVAL_VOID);
+        return JS_TRUE;
+    }
+    if (argc == 1) {
+        const char* arg0;
+        std::string arg0_tmp; ok &= jsval_to_std_string(cx, argv[0], &arg0_tmp); arg0 = arg0_tmp.c_str();
+        JSB_PRECONDITION2(ok, cx, JS_FALSE, "Error processing arguments");
+        sdkbox::IAP::init(arg0);
         JS_SET_RVAL(cx, vp, JSVAL_VOID);
         return JS_TRUE;
     }
@@ -241,6 +260,39 @@ JSBool js_PluginIAPJS_IAP_setDebug(JSContext *cx, uint32_t argc, jsval *vp)
         arg0 = JS::ToBoolean(argv[0]);
         JSB_PRECONDITION2(ok, cx, JS_FALSE, "Error processing arguments");
         sdkbox::IAP::setDebug(arg0);
+        JS_SET_RVAL(cx, vp, JSVAL_VOID);
+        return JS_TRUE;
+    }
+    JS_ReportError(cx, "wrong number of arguments");
+    return JS_FALSE;
+}
+#endif
+#if defined(MOZJS_MAJOR_VERSION)
+bool js_PluginIAPJS_IAP_enableUserSideVerification(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    bool ok = true;
+    if (argc == 1) {
+        bool arg0;
+        arg0 = JS::ToBoolean(args.get(0));
+        JSB_PRECONDITION2(ok, cx, false, "js_PluginIAPJS_IAP_enableUserSideVerification : Error processing arguments");
+        sdkbox::IAP::enableUserSideVerification(arg0);
+        args.rval().setUndefined();
+        return true;
+    }
+    JS_ReportError(cx, "js_PluginIAPJS_IAP_enableUserSideVerification : wrong number of arguments");
+    return false;
+}
+#elif defined(JS_VERSION)
+JSBool js_PluginIAPJS_IAP_enableUserSideVerification(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    jsval *argv = JS_ARGV(cx, vp);
+    JSBool ok = JS_TRUE;
+    if (argc == 1) {
+        bool arg0;
+        arg0 = JS::ToBoolean(argv[0]);
+        JSB_PRECONDITION2(ok, cx, JS_FALSE, "Error processing arguments");
+        sdkbox::IAP::enableUserSideVerification(arg0);
         JS_SET_RVAL(cx, vp, JSVAL_VOID);
         return JS_TRUE;
     }
@@ -328,6 +380,7 @@ void js_register_PluginIAPJS_IAP(JSContext *cx, JS::HandleObject global) {
         JS_FN("refresh", js_PluginIAPJS_IAP_refresh, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("init", js_PluginIAPJS_IAP_init, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("setDebug", js_PluginIAPJS_IAP_setDebug, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("enableUserSideVerification", js_PluginIAPJS_IAP_enableUserSideVerification, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("removeListener", js_PluginIAPJS_IAP_removeListener, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FS_END
     };
@@ -393,6 +446,7 @@ void js_register_PluginIAPJS_IAP(JSContext *cx, JSObject *global) {
         JS_FN("refresh", js_PluginIAPJS_IAP_refresh, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("init", js_PluginIAPJS_IAP_init, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("setDebug", js_PluginIAPJS_IAP_setDebug, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("enableUserSideVerification", js_PluginIAPJS_IAP_enableUserSideVerification, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("removeListener", js_PluginIAPJS_IAP_removeListener, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FS_END
     };
@@ -449,6 +503,7 @@ void js_register_PluginIAPJS_IAP(JSContext *cx, JSObject *global) {
         JS_FN("refresh", js_PluginIAPJS_IAP_refresh, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("init", js_PluginIAPJS_IAP_init, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("setDebug", js_PluginIAPJS_IAP_setDebug, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("enableUserSideVerification", js_PluginIAPJS_IAP_enableUserSideVerification, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("removeListener", js_PluginIAPJS_IAP_removeListener, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FS_END
     };
