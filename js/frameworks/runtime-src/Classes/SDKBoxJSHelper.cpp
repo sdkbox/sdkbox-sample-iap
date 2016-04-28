@@ -2,7 +2,7 @@
 #include <string>
 #include <sstream>
 #include "cocos2d_specifics.hpp"
-#include "Sdkbox/Sdkbox.h"
+#include "sdkbox/Sdkbox.h"
 
 #if defined(MOZJS_MAJOR_VERSION)
 #include "cocos2d_specifics.hpp"
@@ -11,47 +11,138 @@
 namespace sdkbox
 {
 
+#if defined(MOZJS_MAJOR_VERSION)
+    #if MOZJS_MAJOR_VERSION >= 33
+
+        JSOBJECT* JS_NEW_OBJECT( JSContext* cx ) {
+            JS::RootedObject jsobj(cx);
+            jsobj.set( JS_NewObject(cx, NULL, JS::NullPtr(), JS::NullPtr() ) );
+            return jsobj;
+        }
+        
+    #else
+        JSOBJECT* JS_NEW_OBJECT( JSContext* cs ) {
+            return JS_NewObject(cx, NULL, NULL, NULL);
+        }
+        
+    #endif
+    
+    template<typename T>
+    bool JS_ARRAY_SET(JSContext* cx, JSOBJECT* array, uint32_t index, T pr) {
+        return JS_SetElement(cx, JSPROPERTY_OBJECT(cx,array), index, pr);
+    }
+    
+    bool JS_ARRAY_SET(JSContext* cx, JSOBJECT* array, uint32_t index, JSOBJECT* v) {
+        JSPROPERTY_VALUE pr(cx);
+        pr = OBJECT_TO_JSVAL(v);
+        return JS_SetElement(cx, JSPROPERTY_OBJECT(cx,array), index, pr );
+    }
+    
+#elif defined(JS_VERSION)
+
+    template<typename T>
+    bool JS_ARRAY_SET(JSContext* cx, JSOBJECT* array, uint32_t index, T pr) {
+        return JS_SetElement(cx, array, index, &pr);
+    }
+    
+    JSOBJECT* JS_NEW_OBJECT( JSContext* cx ) {
+        return JS_NewObject(cx, NULL, NULL, NULL);
+    }
+    
+#endif
+    
+    
+    JSObject* make_array( JSContext* ctx, int size ) {
+        #if defined(JS_VERSION)
+                return JS_NewArrayObject(ctx, size, NULL);
+        #else
+                return JS_NewArrayObject(ctx, size);
+        #endif
+    }
+
+#if defined(JS_VERSION)
+#define make_property(pr,CTX) JSPROPERTY_VALUE pr = jsval()
+#else
+#define make_property(pr,ctx)  JSPROPERTY_VALUE pr(ctx)
+#endif
+    
+    
+    JSOBJECT* JS_NEW_ARRAY( JSContext* cx, uint32_t size ) {
+        return make_array(cx, size);
+    }
+    
+    JSOBJECT* JS_NEW_ARRAY( JSContext* cx ) {
+        return sdkbox::JS_NEW_ARRAY(cx, 0);
+    }
+    
+    void addProperty( JSContext* cx, JSOBJECT* jsobj, const char* prop, const std::string& value ) {
+        make_property(pr,cx);
+        pr = std_string_to_jsval(cx, value.c_str());
+        JS_SET_PROPERTY(cx, jsobj, prop, pr);
+    }
+    void addProperty( JSContext* cx, JSOBJECT* jsobj, const char* prop, const char* value ) {
+        make_property(pr,cx);
+        pr = std_string_to_jsval(cx, value);
+        JS_SET_PROPERTY(cx, jsobj, prop, pr);
+    }
+    void addProperty( JSContext* cx, JSOBJECT* jsobj, const char* prop, bool value ) {
+        make_property(pr,cx);
+        pr = BOOLEAN_TO_JSVAL(value);
+        JS_SET_PROPERTY(cx, jsobj, prop, pr);
+    }
+    void addProperty( JSContext* cx, JSOBJECT* jsobj, const char* prop, int value ) {
+        make_property(pr,cx);
+        pr = INT_TO_JSVAL(value);
+        JS_SET_PROPERTY(cx, jsobj, prop, pr);
+    }
+    void addProperty( JSContext* cx, JSOBJECT* jsobj, const char* prop, JSOBJECT* value ) {
+        make_property(pr,cx);
+        pr = OBJECT_TO_JSVAL(value);
+        JS_SET_PROPERTY(cx, jsobj, prop, pr );
+    }
+    
+
     // Spidermonkey v186+
 #if defined(MOZJS_MAJOR_VERSION)
-#if MOZJS_MAJOR_VERSION >= 26
-    bool js_to_number(JSContext *cx, JS::HandleValue v, double *dp)
-    {
-        return JS::ToNumber( cx, v, dp) && !isnan(*dp);
-    }
-
-    bool jsval_to_std_map_string_string(JSContext *cx, JS::HandleValue v, std::map<std::string,std::string> *ret)
-    {
-        cocos2d::ValueMap value;
-        bool ok = jsval_to_ccvaluemap(cx, v, &value);
-        if (!ok)
+    #if MOZJS_MAJOR_VERSION >= 26
+        bool js_to_number(JSContext *cx, JS::HandleValue v, double *dp)
         {
+            return JS::ToNumber( cx, v, dp) && !isnan(*dp);
+        }
+
+        bool jsval_to_std_map_string_string(JSContext *cx, JS::HandleValue v, std::map<std::string,std::string> *ret)
+        {
+            cocos2d::ValueMap value;
+            bool ok = jsval_to_ccvaluemap(cx, v, &value);
+            if (!ok)
+            {
+                return ok;
+            }
+            else
+            {
+                for (cocos2d::ValueMap::iterator it = value.begin(); it != value.end(); it++)
+                {
+                    ret->insert(std::make_pair(it->first, it->second.asString()));
+                }
+            }
+
             return ok;
         }
-        else
+
+    #if MOZJS_MAJOR_VERSION < 33
+        void get_or_create_js_obj(JSContext* cx, JS::HandleObject obj, const std::string &name, JS::MutableHandleObject jsObj)
         {
-            for (cocos2d::ValueMap::iterator it = value.begin(); it != value.end(); it++)
-            {
-                ret->insert(std::make_pair(it->first, it->second.asString()));
+            JS::RootedValue nsval(cx);
+            JS_GetProperty(cx, obj, name.c_str(), &nsval);
+            if (nsval == JSVAL_VOID) {
+                jsObj.set(JS_NewObject(cx, NULL, NULL, NULL));
+                nsval = OBJECT_TO_JSVAL(jsObj);
+                JS_SetProperty(cx, obj, name.c_str(), nsval);
+            } else {
+                jsObj.set(nsval.toObjectOrNull());
             }
         }
-
-        return ok;
-    }
-
-#if MOZJS_MAJOR_VERSION < 33
-    void get_or_create_js_obj(JSContext* cx, JS::HandleObject obj, const std::string &name, JS::MutableHandleObject jsObj)
-    {
-        JS::RootedValue nsval(cx);
-        JS_GetProperty(cx, obj, name.c_str(), &nsval);
-        if (nsval == JSVAL_VOID) {
-            jsObj.set(JS_NewObject(cx, NULL, NULL, NULL));
-            nsval = OBJECT_TO_JSVAL(jsObj);
-            JS_SetProperty(cx, obj, name.c_str(), nsval);
-        } else {
-            jsObj.set(nsval.toObjectOrNull());
-        }
-    }
-#endif
+    #endif
 
     void getJsObjOrCreat(JSContext* cx, JS::HandleObject jsObj, const char* name, JS::RootedObject* retObj) {
         JS::RootedObject parent(cx);
@@ -228,7 +319,7 @@ namespace sdkbox
     }
 
 #endif
-    
+
     jsval std_map_string_int_to_jsval(JSContext* cx, const std::map<std::string, int>& v) {
         JS::RootedObject proto(cx);
         JS::RootedObject parent(cx);
@@ -237,17 +328,17 @@ namespace sdkbox
 #else
         JSObject *jsRet = JS_NewObject(cx, NULL, NULL, NULL);
 #endif
-        
+
         for (auto iter = v.begin(); iter != v.end(); ++iter) {
 #if defined(MOZJS_MAJOR_VERSION) and MOZJS_MAJOR_VERSION >= 26
             JS::RootedValue element(cx);
 #else
             jsval element;
 #endif
-            
+
             std::string key = iter->first;
             int val = iter->second;
-            
+
             element = INT_TO_JSVAL(val);
 
             if (!key.empty()) {
@@ -269,19 +360,19 @@ namespace sdkbox
 #else
         JSObject *jsRet = JS_NewObject(cx, NULL, NULL, NULL);
 #endif
-        
+
         for (auto iter = v.begin(); iter != v.end(); ++iter) {
 #if defined(MOZJS_MAJOR_VERSION) and MOZJS_MAJOR_VERSION >= 26
             JS::RootedValue element(cx);
 #else
             jsval element;
 #endif
-            
+
             std::string key = iter->first;
             std::string val = iter->second;
 
             element = std_string_to_jsval(cx, val);
-            
+
             if (!key.empty()) {
 #if defined(MOZJS_MAJOR_VERSION) and MOZJS_MAJOR_VERSION >= 26
                 JS_SetProperty(cx, jsRet, key.c_str(), element);

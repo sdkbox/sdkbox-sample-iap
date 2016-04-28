@@ -50,6 +50,9 @@ namespace sdkbox
 
         // receipt info. will be empty string for iOS
         std::string receipt;
+
+        // unique transaction id
+        std::string transactionID;
     };
 
     /**
