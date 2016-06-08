@@ -26,7 +26,7 @@ function MainScene:setupTestMenu()
     end)
 
     local btnRestore = cc.MenuItemFont:create("restore purchase"):onClicked(function()
-        sdkbox.IAP.restore();
+        sdkbox.IAP:restore();
     end)
 
     local menu = cc.Menu:create(btnLoad, btnRestore)
