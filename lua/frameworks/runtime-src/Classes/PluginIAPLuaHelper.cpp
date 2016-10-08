@@ -1,8 +1,6 @@
 
 #include "PluginIAPLuaHelper.h"
 #include "PluginIAP/PluginIAP.h"
-#include "CCLuaEngine.h"
-#include "tolua_fix.h"
 #include "SDKBoxLuaHelper.h"
 
 
