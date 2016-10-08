@@ -1,15 +1,57 @@
 #include "SDKBoxJSHelper.h"
 #include <string>
 #include <sstream>
-#include "cocos2d_specifics.hpp"
 #include "sdkbox/Sdkbox.h"
 
-#if defined(MOZJS_MAJOR_VERSION)
-#include "cocos2d_specifics.hpp"
-#endif
+#if COCOS2D_VERSION < 0x00030000
+JSFunctionWrapper::JSFunctionWrapper(JSContext* cx, JSObject *jsthis, jsval fval)
+: _cx(cx)
+, _jsthis(jsthis)
+, _fval(fval)
+{
+    JS_AddNamedValueRoot(cx, &this->_fval, "JSFunctionWrapper");
+    JS_AddNamedObjectRoot(cx, &this->_jsthis, "JSFunctionWrapper");
+}
+
+JSFunctionWrapper::~JSFunctionWrapper()
+{
+    JS_RemoveValueRoot(this->_cx, &this->_fval);
+    JS_RemoveObjectRoot(this->_cx, &this->_jsthis);
+}
+#endif // JSFunctionWrapper
 
 namespace sdkbox
 {
+
+    JSListenerBase::JSListenerBase()
+    {
+        _jsFuncWrapper = NULL;
+    }
+    JSListenerBase::~JSListenerBase()
+    {
+        CC_SAFE_DELETE(_jsFuncWrapper);
+    }
+
+    void JSListenerBase::setJSDelegate(JS::HandleValue func)
+    {
+        _JSDelegate = func.toObjectOrNull();
+
+        CC_SAFE_DELETE(_jsFuncWrapper);
+
+        JSContext* cx = ScriptingCore::getInstance()->getGlobalContext();
+
+#if SDKBOX_COCOS_JSB_VERSION >= 2
+        JS::RootedObject targetObj(cx);
+        targetObj.set(_JSDelegate);
+        _jsFuncWrapper = new JSFunctionWrapper(cx, targetObj, JS::NullHandleValue);
+#else
+        _jsFuncWrapper = new JSFunctionWrapper(cx, _JSDelegate, jsval());
+#endif
+    }
+    JSObject* JSListenerBase::getJSDelegate()
+    {
+        return _JSDelegate;
+    }
 
 #if defined(MOZJS_MAJOR_VERSION)
     #if MOZJS_MAJOR_VERSION >= 33
@@ -19,45 +61,51 @@ namespace sdkbox
             jsobj.set( JS_NewObject(cx, NULL, JS::NullPtr(), JS::NullPtr() ) );
             return jsobj;
         }
-        
+
     #else
-        JSOBJECT* JS_NEW_OBJECT( JSContext* cs ) {
+        JSOBJECT* JS_NEW_OBJECT( JSContext* cx ) {
             return JS_NewObject(cx, NULL, NULL, NULL);
         }
-        
+
     #endif
-    
+
     template<typename T>
     bool JS_ARRAY_SET(JSContext* cx, JSOBJECT* array, uint32_t index, T pr) {
         return JS_SetElement(cx, JSPROPERTY_OBJECT(cx,array), index, pr);
     }
-    
+
     bool JS_ARRAY_SET(JSContext* cx, JSOBJECT* array, uint32_t index, JSOBJECT* v) {
         JSPROPERTY_VALUE pr(cx);
         pr = OBJECT_TO_JSVAL(v);
+
+#if MOZJS_MAJOR_VERSION <= 28
+        return JS_SetElement(cx, JSPROPERTY_OBJECT(cx,array), index, &pr );
+#else
         return JS_SetElement(cx, JSPROPERTY_OBJECT(cx,array), index, pr );
+#endif
     }
-    
+
 #elif defined(JS_VERSION)
 
     template<typename T>
     bool JS_ARRAY_SET(JSContext* cx, JSOBJECT* array, uint32_t index, T pr) {
         return JS_SetElement(cx, array, index, &pr);
     }
-    
+
     JSOBJECT* JS_NEW_OBJECT( JSContext* cx ) {
         return JS_NewObject(cx, NULL, NULL, NULL);
     }
-    
+
 #endif
-    
-    
+
+
     JSObject* make_array( JSContext* ctx, int size ) {
-        #if defined(JS_VERSION)
-                return JS_NewArrayObject(ctx, size, NULL);
-        #else
-                return JS_NewArrayObject(ctx, size);
-        #endif
+        // https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/JSAPI_reference/JS_NewArrayObject
+#if MOZJS_MAJOR_VERSION >= 31
+        return JS_NewArrayObject(ctx, size);
+#else
+        return JS_NewArrayObject(ctx, size, NULL);
+#endif
     }
 
 #if defined(JS_VERSION)
@@ -65,16 +113,16 @@ namespace sdkbox
 #else
 #define make_property(pr,ctx)  JSPROPERTY_VALUE pr(ctx)
 #endif
-    
-    
+
+
     JSOBJECT* JS_NEW_ARRAY( JSContext* cx, uint32_t size ) {
         return make_array(cx, size);
     }
-    
+
     JSOBJECT* JS_NEW_ARRAY( JSContext* cx ) {
         return sdkbox::JS_NEW_ARRAY(cx, 0);
     }
-    
+
     void addProperty( JSContext* cx, JSOBJECT* jsobj, const char* prop, const std::string& value ) {
         make_property(pr,cx);
         pr = std_string_to_jsval(cx, value.c_str());
@@ -100,7 +148,7 @@ namespace sdkbox
         pr = OBJECT_TO_JSVAL(value);
         JS_SET_PROPERTY(cx, jsobj, prop, pr );
     }
-    
+
 
     // Spidermonkey v186+
 #if defined(MOZJS_MAJOR_VERSION)

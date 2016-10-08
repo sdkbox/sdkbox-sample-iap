@@ -1,5 +1,4 @@
 #include "PluginIAPJSHelper.h"
-#include "cocos2d_specifics.hpp"
 #include "PluginIAP/PluginIAP.h"
 
 extern JSObject* jsb_sdkbox_PluginAdColony_prototype;
@@ -136,14 +135,15 @@ jsval std_vector_product_to_jsval( JSContext *cx, const std::vector<sdkbox::Prod
 
 
 USING_NS_CC;
-#if COCOS2D_VERSION < 0x00030000
-#else
-#define CCObject Ref
-#define CCDirector Director
-#define sharedDirector getInstance
+
+#if (COCOS2D_VERSION < 0x00030000)
+#define Ref CCObject
+#define Director CCDirector
+#define getInstance sharedDirector
+#define schedule scheduleSelector
 #endif
 
-class JsIAPCallbackObj : public CCObject {
+class JsIAPCallbackObj : public Ref {
 
 public:
     static JsIAPCallbackObj* create(const std::string& name, JSObject *handler) {
@@ -172,8 +172,8 @@ public:
     }
 
     void start() {
-        CCDirector::sharedDirector()->getScheduler()
-            ->scheduleSelector(schedule_selector(JsIAPCallbackObj::callback), this, 0.1, false);
+        Director::getInstance()->getScheduler()
+            ->schedule(schedule_selector(JsIAPCallbackObj::callback), this, 0.1, 0, 0.0f, false);
     }
 
     void callback(float dt) {
@@ -250,8 +250,6 @@ public:
             JS_CallFunctionName(cx, obj, func_name, datalen, dataVal, &retval);
 #endif
         }
-
-        CCDirector::sharedDirector()->getScheduler()->unscheduleAllForTarget(this);
         release();
     }
 
@@ -274,65 +272,57 @@ private:
 }; // JsIAPCallbackObj
 
 
-class IAPWrapperJS : public sdkbox::IAPListener {
-
-private:
-    JSObject* _JSDelegate;
-
+class IAPWrapperJS : public sdkbox::IAPListener, public sdkbox::JSListenerBase
+{
 public:
-    void setJSDelegate(JSObject* delegate) {
-        _JSDelegate = delegate;
-    }
-
-    JSObject* getJSDelegate() {
-        return _JSDelegate;
+    IAPWrapperJS():sdkbox::JSListenerBase() {
     }
 
     void onSuccess(const sdkbox::Product& info) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onSuccess", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onSuccess", getJSDelegate());
         obj->setProduct(info);
         obj->start();
     }
 
     void onFailure(const sdkbox::Product& info, const std::string& msg) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onFailure", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onFailure", getJSDelegate());
         obj->setProduct(info);
         obj->setMsg(msg);
         obj->start();
     }
 
     void onCanceled(const sdkbox::Product& info) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onCanceled", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onCanceled", getJSDelegate());
         obj->setProduct(info);
         obj->start();
     }
 
     void onRestored(const sdkbox::Product& info) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onRestored", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onRestored", getJSDelegate());
         obj->setProduct(info);
         obj->start();
     }
 
     void onProductRequestSuccess(const std::vector<sdkbox::Product>& products) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onProductRequestSuccess", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onProductRequestSuccess", getJSDelegate());
         obj->setProducts(products);
         obj->start();
     }
 
     void onProductRequestFailure(const std::string& msg) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onProductRequestFailure", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onProductRequestFailure", getJSDelegate());
         obj->setMsg(msg);
         obj->start();
     }
 
     void onInitialized(bool ok) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onInitialized", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onInitialized", getJSDelegate());
         obj->setBoolean(ok);
         obj->start();
     }
 
     void onRestoreComplete(bool ok, const std::string& msg) {
-        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onRestoreComplete", _JSDelegate);
+        JsIAPCallbackObj* obj = JsIAPCallbackObj::create("onRestoreComplete", getJSDelegate());
         obj->setBoolean(ok);
         obj->setMsg(msg);
         obj->start();
@@ -355,11 +345,10 @@ JSBool js_PluginIAPJS_setListener(JSContext *cx, uint32_t argc, jsval *vp)
         {
             ok = false;
         }
-        JSObject *tmpObj = args.get(0).toObjectOrNull();
 
         JSB_PRECONDITION2(ok, cx, false, "js_PluginIAPJS_setListener : Error processing arguments");
         IAPWrapperJS* wrapper = new IAPWrapperJS();
-        wrapper->setJSDelegate(tmpObj);
+        wrapper->setJSDelegate(args.get(0));
         sdkbox::IAP::setListener(wrapper);
 
         args.rval().setUndefined();
