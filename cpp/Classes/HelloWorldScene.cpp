@@ -70,7 +70,7 @@ void HelloWorld::createTestMenu()
     _txtCoin = Label::createWithSystemFont("0", "sans", 24);
     _txtCoin->setPosition(Vec2(size.width / 2, 60));
     addChild(_txtCoin);
-    
+
     auto menu = Menu::create(MenuItemFont::create("load products", CC_CALLBACK_1(HelloWorld::onRequestIAP, this)),
                              MenuItemFont::create("restore purchase", CC_CALLBACK_1(HelloWorld::onRestoreIAP, this)),
                              NULL);
@@ -122,7 +122,7 @@ void HelloWorld::onSuccess(const Product &p)
     else if (p.name == "remove_ads") {
         CCLOG("Purchase complete: Remove Ads");
     }
-    
+
     CCLOG("Purchase Success: %s", p.id.c_str());
 }
 
@@ -161,7 +161,7 @@ void HelloWorld::updateIAP(const std::vector<sdkbox::Product>& products)
         item->setUserData(reinterpret_cast<void*>(i));
         _iapMenu->addChild(item);
     }
-    
+
     Size size = Director::getInstance()->getWinSize();
     _iapMenu->alignItemsVerticallyWithPadding(5);
     _iapMenu->setPosition(Vec2(size.width/2, size.height / 2));
