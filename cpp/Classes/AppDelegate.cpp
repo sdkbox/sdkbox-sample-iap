@@ -26,9 +26,7 @@ void AppDelegate::initGLContextAttrs()
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
-#ifdef SDKBOX_ENABLED
-    sdkbox::IAP::init();
-#endif
+
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
