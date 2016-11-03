@@ -25,17 +25,17 @@
             "items": {
                 "remove_ads": {
                     "type": "non_consumable", 
-                    "id": "com.cocos2dx.non1"
+                    "id": "com.sdkbox.non1"
                 }, 
                 "coin_package": {
-                    "id": "com.cocos2dx.plugintest2"
+                    "id": "com.sdkbox.com1"
                 }, 
                 "double_coin": {
                     "type": "non_consumable", 
-                    "id": "com.cocos2dx.non2"
+                    "id": "com.sdkbox.non2"
                 }, 
                 "coin_package2": {
-                    "id": "com.cocos2dx.plugintest3"
+                    "id": "com.sdkbox.plugintest3"
                 }
             }
         }
