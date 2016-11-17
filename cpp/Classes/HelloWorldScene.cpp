@@ -124,6 +124,18 @@ void HelloWorld::onSuccess(const Product &p)
     }
 
     CCLOG("Purchase Success: %s", p.id.c_str());
+    
+    CCLOG("IAP: ========= IAP Item =========");
+    CCLOG("IAP: Name: %s", p.name.c_str());
+    CCLOG("IAP: ID: %s", p.id.c_str());
+    CCLOG("IAP: Title: %s", p.title.c_str());
+    CCLOG("IAP: Desc: %s", p.description.c_str());
+    CCLOG("IAP: Price: %s", p.price.c_str());
+    CCLOG("IAP: Price Value: %f", p.priceValue);
+    CCLOG("IAP: Currency: %s", p.currencyCode.c_str());
+    CCLOG("IAP: transactionID: %s", p.transactionID.c_str());
+    CCLOG("IAP: receipt: %s", p.receipt.c_str());
+    CCLOG("IAP: receipt data: %s", p.receiptCipheredPayload.c_str());
 }
 
 void HelloWorld::onFailure(const Product &p, const std::string &msg)
@@ -156,6 +168,7 @@ void HelloWorld::updateIAP(const std::vector<sdkbox::Product>& products)
         CCLOG("IAP: Desc: %s", _products[i].description.c_str());
         CCLOG("IAP: Price: %s", _products[i].price.c_str());
         CCLOG("IAP: Price Value: %f", _products[i].priceValue);
+        CCLOG("IAP: Currency: %s", _products[i].currencyCode.c_str());
 
         auto item = MenuItemFont::create(_products[i].name, CC_CALLBACK_1(HelloWorld::onIAP, this));
         item->setUserData(reinterpret_cast<void*>(i));
