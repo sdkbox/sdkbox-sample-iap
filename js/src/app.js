@@ -32,6 +32,20 @@ var HelloWorldLayer = cc.Layer.extend({
         return true;
     },
 
+    printProduct:function(p) {
+        cc.log("======The product info======");
+        cc.log("name=", p.name);
+        cc.log("title=", p.title);
+        cc.log("description=", p.description);
+        cc.log("price=", p.price);
+        cc.log("currencyCode=", p.currencyCode);
+        cc.log("receipt=", p.receipt);
+        cc.log("receiptCipheredPayload=", p.receiptCipheredPayload);
+        cc.log("transactionID=", p.transactionID);
+        cc.log("");
+    },
+
+
     createTestMenu:function() {
         var self = this;
 
@@ -42,35 +56,39 @@ var HelloWorldLayer = cc.Layer.extend({
         sdkbox.IAP.setListener({
             onSuccess : function (product) {
                 //Purchase success
-                cc.log("Purchase successful: " + product.name)
+                self.log("Purchase successful: " + product.name);
+                self.printProduct(product);
             },
             onFailure : function (product, msg) {
                 //Purchase failed
                 //msg is the error message
                 cc.log("Purchase failed: " + product.name + " error: " + msg);
+
             },
             onCanceled : function (product) {
                 //Purchase was canceled by user
-                cc.log("Purchase canceled: " + product.name);
+                self.log("Purchase canceled: " + product.name);
             },
             onRestored : function (product) {
                 //Purchase restored
-                cc.log("Restored: " + product.name);
+                self.log("Restored: " + product.name);
+
+                self.printProduct(product);
             },
             onProductRequestSuccess : function (products) {
                 self.menuIAP.removeAllChildren();
                 //Returns you the data for all the iap products
                 //You can get each item using following method
                 for (var i = 0; i < products.length; i++) {
-                    cc.log("================");
-                    cc.log("name: " + products[i].name);
-                    cc.log("price: " + products[i].price);
-                    cc.log("================");
+                    self.log("================");
+                    self.log("name: " + products[i].name);
+                    self.log("price: " + products[i].price);
+                    self.log("================");
 
                     (function() {
                         var name = products[i].name;
                         var btn = new cc.MenuItemFont(name, function() {
-                            cc.log("purchase: " + name);
+                            self.log("purchase: " + name);
                             sdkbox.IAP.purchase(name);
                         });
                         self.menuIAP.addChild(btn);
@@ -80,7 +98,7 @@ var HelloWorldLayer = cc.Layer.extend({
             },
             onProductRequestFailure : function (msg) {
                 //When product refresh request fails.
-                cc.log("Failed to get products");
+                self.log("Failed to get products");
             }
         });
 
@@ -103,10 +121,26 @@ var HelloWorldLayer = cc.Layer.extend({
         this.menuIAP = new cc.Menu();
         this.addChild(this.menuIAP);
 
-        this.txtCoin = new cc.Label("0", "sans", 32);
+        this.txtCoin = new cc.LabelTTF("0", "sans", 32);
         this.txtCoin.x = size.width / 2;
         this.txtCoin.y = 120;
         this.addChild(this.txtCoin);
+
+        self.log("IAP test")
+    },
+
+    log:function(msg) {
+        cc.log(msg);
+        if (this.logCount == null) {
+            this.logLabel = new cc.LabelTTF("log here", "sans", 16);
+            this.logLabel.setAnchorPoint(0, 0)
+            this.logLabel.x = 12;
+            this.logLabel.y = 50;
+            this.addChild(this.logLabel);
+            this.logCount = 0;
+        }
+        this.logLabel.setString(this.logLabel.getString() + "\n" + this.logCount + ") " + msg);
+        this.logCount = this.logCount + 1
     }
 });
 

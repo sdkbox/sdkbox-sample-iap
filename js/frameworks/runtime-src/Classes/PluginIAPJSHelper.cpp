@@ -18,6 +18,7 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     JS::RootedValue currencyCode(cx);
     JS::RootedValue receipt(cx);
     JS::RootedValue receiptCipheredPayload(cx);
+    JS::RootedValue transactionID(cx);
 
     name = std_string_to_jsval(cx, p.name);
 
@@ -36,6 +37,9 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     JS_SetProperty(cx, jsobj, "receipt", receipt);
     receiptCipheredPayload = std_string_to_jsval(cx, p.receiptCipheredPayload);
     JS_SetProperty(cx, jsobj, "receiptCipheredPayload", receiptCipheredPayload);
+
+    transactionID = std_string_to_jsval(cx, p.transactionID);
+    JS_SetProperty(cx, jsobj, "transactionID", transactionID);
 
 #else
     JSObject* jsobj = JS_NewObject(cx, NULL, NULL, NULL);
@@ -47,6 +51,7 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     JS::RootedValue currencyCode(cx);
     JS::RootedValue receipt(cx);
     JS::RootedValue receiptCipheredPayload(cx);
+    JS::RootedValue transactionID(cx);
 
     name = std_string_to_jsval(cx, p.name);
 
@@ -65,6 +70,8 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     JS_SetProperty(cx, jsobj, "receipt", receipt);
     receiptCipheredPayload = std_string_to_jsval(cx, p.receiptCipheredPayload);
     JS_SetProperty(cx, jsobj, "receiptCipheredPayload", receiptCipheredPayload);
+    transactionID = std_string_to_jsval(cx, p.transactionID);
+    JS_SetProperty(cx, jsobj, "transactionID", transactionID);
 
 #endif
 #elif defined(JS_VERSION)
@@ -77,6 +84,7 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     jsval currencyCode;
     jsval receipt;
     jsval receiptCipheredPayload;
+    jsval transactionID;
 
     name = std_string_to_jsval(cx, p.name);
 
@@ -95,6 +103,9 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     JS_SetProperty(cx, jsobj, "receipt", &receipt);
     receiptCipheredPayload = std_string_to_jsval(cx, p.receiptCipheredPayload);
     JS_SetProperty(cx, jsobj, "receiptCipheredPayload", &receiptCipheredPayload);
+
+    transactionID = std_string_to_jsval(cx, p.transactionID);
+    JS_SetProperty(cx, jsobj, "transactionID", &transactionID);
 
 #endif
 
