@@ -8,7 +8,7 @@ var HelloWorldLayer = cc.Layer.extend({
         // 1. super init first
         this._super();
 
-        cc.log("Sample Startup")
+        this.log("Sample Startup")
 
         this.createTestMenu();
 
@@ -33,16 +33,16 @@ var HelloWorldLayer = cc.Layer.extend({
     },
 
     printProduct:function(p) {
-        cc.log("======The product info======");
-        cc.log("name=", p.name);
-        cc.log("title=", p.title);
-        cc.log("description=", p.description);
-        cc.log("price=", p.price);
-        cc.log("currencyCode=", p.currencyCode);
-        cc.log("receipt=", p.receipt);
-        cc.log("receiptCipheredPayload=", p.receiptCipheredPayload);
-        cc.log("transactionID=", p.transactionID);
-        cc.log("");
+        self.log("======The product info======");
+        self.log("name=", p.name);
+        self.log("title=", p.title);
+        self.log("description=", p.description);
+        self.log("price=", p.price);
+        self.log("currencyCode=", p.currencyCode);
+        self.log("receipt=", p.receipt);
+        self.log("receiptCipheredPayload=", p.receiptCipheredPayload);
+        self.log("transactionID=", p.transactionID);
+        self.log("");
     },
 
 
@@ -62,7 +62,7 @@ var HelloWorldLayer = cc.Layer.extend({
             onFailure : function (product, msg) {
                 //Purchase failed
                 //msg is the error message
-                cc.log("Purchase failed: " + product.name + " error: " + msg);
+                self.log("Purchase failed: " + product.name + " error: " + msg);
 
             },
             onCanceled : function (product) {
@@ -125,8 +125,6 @@ var HelloWorldLayer = cc.Layer.extend({
         this.txtCoin.x = size.width / 2;
         this.txtCoin.y = 120;
         this.addChild(this.txtCoin);
-
-        self.log("IAP test")
     },
 
     log:function(msg) {
