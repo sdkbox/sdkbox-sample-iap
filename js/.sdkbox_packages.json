@@ -10,7 +10,7 @@
             "remote": 1, 
             "verbose": 0, 
             "forcecopy": 1, 
-            "nohelp": 0, 
+            "nohelp": 1, 
             "server": "120.55.89.27:4097/installer/v1/", 
             "manifest": "manifest.json", 
             "project": "./", 
@@ -25,14 +25,14 @@
         "version": [
             2, 
             3, 
-            13, 
-            5
+            14, 
+            3
         ], 
         "result": "ok", 
         "message": "success", 
         "constants": {
             "ANDROID_STUDIO_JNI_DIR": "n/a", 
-            "COCOS_BACKUP_DIR": "backup-2017-05-02/", 
+            "COCOS_BACKUP_DIR": "backup-2017-06-19/", 
             "COCOS_PROJECT_DIR": "./", 
             "COCOS_2DX_INSTALLATION_VERSION": "3.8.0", 
             "android_js_sources": [
@@ -45,7 +45,6 @@
             "SDKBOX_PLUGIN_NAME": "IAP", 
             "ANDROID_STUDIO_PROJECT_DIR": "n/a", 
             "COCOS_PROJECT_HINT": "frameworks/runtime-src/", 
-            "SDKBOX_DIR": "/Users/jryin/.sdkbox/", 
             "ANDROID_STUDIO_PROPERTIES": "n/a", 
             "IOS_PROJECT_DIR": "frameworks/runtime-src/proj.ios_mac/", 
             "ANDROID_PROJECT_DIR": "frameworks/runtime-src/proj.android/", 
@@ -92,7 +91,7 @@
             "remote": 1, 
             "verbose": 0, 
             "forcecopy": 1, 
-            "nohelp": 0, 
+            "nohelp": 1, 
             "server": "120.55.89.27:4097/installer/v1/", 
             "manifest": "manifest.json", 
             "project": "./", 
@@ -107,14 +106,14 @@
         "version": [
             2, 
             3, 
-            13, 
-            5
+            14, 
+            3
         ], 
         "result": "ok", 
         "message": "success", 
         "constants": {
             "ANDROID_STUDIO_JNI_DIR": "n/a", 
-            "COCOS_BACKUP_DIR": "backup-2017-05-02/", 
+            "COCOS_BACKUP_DIR": "backup-2017-06-19/", 
             "COCOS_PROJECT_DIR": "./", 
             "COCOS_2DX_INSTALLATION_VERSION": "3.8.0", 
             "android_js_sources": [
@@ -128,7 +127,6 @@
             "SDKBOX_PLUGIN_NAME": "IAP", 
             "ANDROID_STUDIO_PROJECT_DIR": "n/a", 
             "COCOS_PROJECT_HINT": "frameworks/runtime-src/", 
-            "SDKBOX_DIR": "/Users/jryin/.sdkbox/", 
             "ANDROID_STUDIO_PROPERTIES": "n/a", 
             "IOS_PROJECT_DIR": "frameworks/runtime-src/proj.ios_mac/", 
             "ANDROID_PROJECT_DIR": "frameworks/runtime-src/proj.android/", 
