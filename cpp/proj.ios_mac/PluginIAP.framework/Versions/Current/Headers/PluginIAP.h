@@ -21,6 +21,10 @@ namespace sdkbox
     // Product from SDKBox In App Purchase
     struct Product
     {
+        Product() : name(""), id(""), title(""), description(""),
+        priceValue(0), price(""), currencyCode(""), receiptCipheredPayload(""),
+        receipt(""), transactionID("") {}
+
         // The name specified in sdkbox_config.json
         std::string name;
 
@@ -51,7 +55,7 @@ namespace sdkbox
         // receipt info. will be empty string for iOS
         std::string receipt;
 
-        // unique transaction id
+        // unique                     id
         std::string transactionID;
     };
 

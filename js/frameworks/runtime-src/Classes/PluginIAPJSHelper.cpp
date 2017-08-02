@@ -5,11 +5,15 @@ extern JSObject* jsb_sdkbox_PluginAdColony_prototype;
 
 static JSContext* s_cx = nullptr;
 
-JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
+void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleObject retObj)
 {
 #if defined(MOZJS_MAJOR_VERSION)
 #if MOZJS_MAJOR_VERSION >= 33
+#if MOZJS_MAJOR_VERSION >= 52
+    JS::RootedObject jsobj(cx, JS_NewObject(cx, NULL));
+#else
     JS::RootedObject jsobj(cx, JS_NewObject(cx, NULL, JS::NullPtr(), JS::NullPtr()));
+#endif
     JS::RootedValue name(cx);
     JS::RootedValue id(cx);
     JS::RootedValue title(cx);
@@ -20,25 +24,25 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     JS::RootedValue receiptCipheredPayload(cx);
     JS::RootedValue transactionID(cx);
 
-    name = std_string_to_jsval(cx, p.name);
+    name = SB_STR_TO_JSVAL(cx, p.name);
 
     JS_SetProperty(cx, jsobj, "name", name);
-    id = std_string_to_jsval(cx, p.id);
+    id = SB_STR_TO_JSVAL(cx, p.id);
     JS_SetProperty(cx, jsobj, "id", id);
-    title = std_string_to_jsval(cx, p.title);
+    title = SB_STR_TO_JSVAL(cx, p.title);
     JS_SetProperty(cx, jsobj, "title", title);
-    description = std_string_to_jsval(cx, p.description);
+    description = SB_STR_TO_JSVAL(cx, p.description);
     JS_SetProperty(cx, jsobj, "description", description);
-    price = std_string_to_jsval(cx, p.price);
+    price = SB_STR_TO_JSVAL(cx, p.price);
     JS_SetProperty(cx, jsobj, "price", price);
-    currencyCode = std_string_to_jsval(cx, p.currencyCode);
+    currencyCode = SB_STR_TO_JSVAL(cx, p.currencyCode);
     JS_SetProperty(cx, jsobj, "currencyCode", currencyCode);
-    receipt = std_string_to_jsval(cx, p.receipt);
+    receipt = SB_STR_TO_JSVAL(cx, p.receipt);
     JS_SetProperty(cx, jsobj, "receipt", receipt);
-    receiptCipheredPayload = std_string_to_jsval(cx, p.receiptCipheredPayload);
+    receiptCipheredPayload = SB_STR_TO_JSVAL(cx, p.receiptCipheredPayload);
     JS_SetProperty(cx, jsobj, "receiptCipheredPayload", receiptCipheredPayload);
 
-    transactionID = std_string_to_jsval(cx, p.transactionID);
+    transactionID = SB_STR_TO_JSVAL(cx, p.transactionID);
     JS_SetProperty(cx, jsobj, "transactionID", transactionID);
 
 #else
@@ -53,24 +57,24 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     JS::RootedValue receiptCipheredPayload(cx);
     JS::RootedValue transactionID(cx);
 
-    name = std_string_to_jsval(cx, p.name);
+    name = SB_STR_TO_JSVAL(cx, p.name);
 
     JS_SetProperty(cx, jsobj, "name", name);
-    id = std_string_to_jsval(cx, p.id);
+    id = SB_STR_TO_JSVAL(cx, p.id);
     JS_SetProperty(cx, jsobj, "id", id);
-    title = std_string_to_jsval(cx, p.title);
+    title = SB_STR_TO_JSVAL(cx, p.title);
     JS_SetProperty(cx, jsobj, "title", title);
-    description = std_string_to_jsval(cx, p.description);
+    description = SB_STR_TO_JSVAL(cx, p.description);
     JS_SetProperty(cx, jsobj, "description", description);
-    price = std_string_to_jsval(cx, p.price);
+    price = SB_STR_TO_JSVAL(cx, p.price);
     JS_SetProperty(cx, jsobj, "price", price);
-    currencyCode = std_string_to_jsval(cx, p.currencyCode);
+    currencyCode = SB_STR_TO_JSVAL(cx, p.currencyCode);
     JS_SetProperty(cx, jsobj, "currencyCode", currencyCode);
-    receipt = std_string_to_jsval(cx, p.receipt);
+    receipt = SB_STR_TO_JSVAL(cx, p.receipt);
     JS_SetProperty(cx, jsobj, "receipt", receipt);
-    receiptCipheredPayload = std_string_to_jsval(cx, p.receiptCipheredPayload);
+    receiptCipheredPayload = SB_STR_TO_JSVAL(cx, p.receiptCipheredPayload);
     JS_SetProperty(cx, jsobj, "receiptCipheredPayload", receiptCipheredPayload);
-    transactionID = std_string_to_jsval(cx, p.transactionID);
+    transactionID = SB_STR_TO_JSVAL(cx, p.transactionID);
     JS_SetProperty(cx, jsobj, "transactionID", transactionID);
 
 #endif
@@ -86,33 +90,33 @@ JSObject* product_to_obj(JSContext* cx, const sdkbox::Product& p)
     jsval receiptCipheredPayload;
     jsval transactionID;
 
-    name = std_string_to_jsval(cx, p.name);
+    name = SB_STR_TO_JSVAL(cx, p.name);
 
     JS_SetProperty(cx, jsobj, "name", &name);
-    id = std_string_to_jsval(cx, p.id);
+    id = SB_STR_TO_JSVAL(cx, p.id);
     JS_SetProperty(cx, jsobj, "id", &id);
-    title = std_string_to_jsval(cx, p.title);
+    title = SB_STR_TO_JSVAL(cx, p.title);
     JS_SetProperty(cx, jsobj, "title", &title);
-    description = std_string_to_jsval(cx, p.description);
+    description = SB_STR_TO_JSVAL(cx, p.description);
     JS_SetProperty(cx, jsobj, "description", &description);
-    price = std_string_to_jsval(cx, p.price);
+    price = SB_STR_TO_JSVAL(cx, p.price);
     JS_SetProperty(cx, jsobj, "price", &price);
-    currencyCode = std_string_to_jsval(cx, p.currencyCode);
+    currencyCode = SB_STR_TO_JSVAL(cx, p.currencyCode);
     JS_SetProperty(cx, jsobj, "currencyCode", &currencyCode);
-    receipt = std_string_to_jsval(cx, p.receipt);
+    receipt = SB_STR_TO_JSVAL(cx, p.receipt);
     JS_SetProperty(cx, jsobj, "receipt", &receipt);
-    receiptCipheredPayload = std_string_to_jsval(cx, p.receiptCipheredPayload);
+    receiptCipheredPayload = SB_STR_TO_JSVAL(cx, p.receiptCipheredPayload);
     JS_SetProperty(cx, jsobj, "receiptCipheredPayload", &receiptCipheredPayload);
 
-    transactionID = std_string_to_jsval(cx, p.transactionID);
+    transactionID = SB_STR_TO_JSVAL(cx, p.transactionID);
     JS_SetProperty(cx, jsobj, "transactionID", &transactionID);
 
 #endif
 
-    return jsobj;
+    retObj.set(jsobj);
 }
 
-jsval std_vector_product_to_jsval( JSContext *cx, const std::vector<sdkbox::Product>& v)
+void std_vector_product_to_jsval( JSContext *cx, const std::vector<sdkbox::Product>& v, JS::MutableHandleObject retVal)
 {
 #if MOZJS_MAJOR_VERSION >= 31
     JS::RootedObject jsretArr(cx, JS_NewArrayObject(cx, v.size()));
@@ -126,22 +130,26 @@ jsval std_vector_product_to_jsval( JSContext *cx, const std::vector<sdkbox::Prod
     for (; it != v.end(); it++)
     {
 #if defined(MOZJS_MAJOR_VERSION)
-        JS::RootedValue arrElement(cx);
+        JS::RootedObject arrElement(cx);
 #elif defined(JS_VERSION)
         jsval arrElement;
 #endif
-        arrElement = OBJECT_TO_JSVAL(product_to_obj(s_cx, (*it)));
+        product_to_obj(s_cx, (*it), &arrElement);
 
 #if MOZJS_MAJOR_VERSION >= 31
         if (!JS_SetElement(cx, jsretArr, i, arrElement)) {
 #else
-        if (!JS_SetElement(cx, jsretArr, i, &arrElement)) {
+        JS::Value arrElementVal;
+        arrElementVal.setObjectOrNull(arrElement.get());
+        JS::RootedValue arrElementRV(cx, arrElementVal);
+        if (!JS_SetElement(cx, jsretArr, i, &arrElementRV)) {
 #endif
             break;
         }
         ++i;
     }
-    return OBJECT_TO_JSVAL(jsretArr);
+
+    retVal.set(jsretArr);
 }
 
 
@@ -214,34 +222,44 @@ public:
         jsval func_handle;
 #endif
 
-        jsval dataVal[2];
+        JS::Value dataVal[2];
         int datalen = 0;
 
         if (0 == _eventName.compare("onInitialized")) {
-            dataVal[0] = BOOLEAN_TO_JSVAL(_bValue);
+            dataVal[0] = JS::BooleanValue(_bValue);
             datalen = 1;
         } else if (0 == _eventName.compare("onSuccess")) {
-            dataVal[0] = OBJECT_TO_JSVAL(product_to_obj(cx, _product));
+            JS::RootedObject jsProductObj(cx);
+            product_to_obj(cx, _product, &jsProductObj);
+            dataVal[0] = JS::ObjectValue(*jsProductObj.get());
             datalen = 1;
         } else if (0 == _eventName.compare("onFailure")) {
-            dataVal[0] = OBJECT_TO_JSVAL(product_to_obj(cx, _product));
-            dataVal[1] = std_string_to_jsval(cx, _msg);
+            JS::RootedObject jsProductObj(cx);
+            product_to_obj(cx, _product, &jsProductObj);
+            dataVal[0] = JS::ObjectValue(*jsProductObj.get());
+            dataVal[1] = SB_STR_TO_JSVAL(cx, _msg);
             datalen = 2;
         } else if (0 == _eventName.compare("onCanceled")) {
-            dataVal[0] = OBJECT_TO_JSVAL(product_to_obj(cx, _product));
+            JS::RootedObject jsProductObj(cx);
+            product_to_obj(cx, _product, &jsProductObj);
+            dataVal[0] = JS::ObjectValue(*jsProductObj.get());
             datalen = 1;
         } else if (0 == _eventName.compare("onRestored")) {
-            dataVal[0] = OBJECT_TO_JSVAL(product_to_obj(cx, _product));
+            JS::RootedObject jsProductObj(cx);
+            product_to_obj(cx, _product, &jsProductObj);
+            dataVal[0] = JS::ObjectValue(*jsProductObj.get());
             datalen = 1;
         } else if (0 == _eventName.compare("onProductRequestSuccess")) {
-            dataVal[0] = std_vector_product_to_jsval(cx, _products);
+            JS::RootedObject jsProductsObj(cx);
+            std_vector_product_to_jsval(cx, _products, &jsProductsObj);
+            dataVal[0] = JS::ObjectValue(*jsProductsObj.get());
             datalen = 1;
         } else if (0 == _eventName.compare("onProductRequestFailure")) {
-            dataVal[0] = std_string_to_jsval(cx, _msg);
+            dataVal[0] = SB_STR_TO_JSVAL(cx, _msg);
             datalen = 1;
         } else if (0 == _eventName.compare("onRestoreComplete")) {
-            dataVal[0] = BOOLEAN_TO_JSVAL(_bValue);
-            dataVal[1] = std_string_to_jsval(cx, _msg);
+            dataVal[0] = JS::BooleanValue(_bValue);
+            dataVal[1] = SB_STR_TO_JSVAL(cx, _msg);
             datalen = 2;
         } else {
             return;
@@ -251,7 +269,7 @@ public:
             if(!JS_GetProperty(cx, obj, func_name, &func_handle)) {
                 return;
             }
-            if(func_handle == JSVAL_VOID) {
+            if(func_handle == JS::NullValue()) {
                 return;
             }
 
@@ -341,7 +359,7 @@ public:
 };
 
 #if defined(MOZJS_MAJOR_VERSION)
-bool js_PluginIAPJS_setListener(JSContext *cx, uint32_t argc, jsval *vp)
+    bool js_PluginIAPJS_setListener(JSContext *cx, uint32_t argc, JS::Value *vp)
 #elif defined(JS_VERSION)
 JSBool js_PluginIAPJS_setListener(JSContext *cx, uint32_t argc, jsval *vp)
 #endif
@@ -359,27 +377,28 @@ JSBool js_PluginIAPJS_setListener(JSContext *cx, uint32_t argc, jsval *vp)
 
         JSB_PRECONDITION2(ok, cx, false, "js_PluginIAPJS_setListener : Error processing arguments");
         IAPWrapperJS* wrapper = new IAPWrapperJS();
-        wrapper->setJSDelegate(args.get(0));
+        wrapper->setJSDelegate(cx, args.get(0));
         sdkbox::IAP::setListener(wrapper);
 
         args.rval().setUndefined();
         return true;
     }
-    JS_ReportError(cx, "js_PluginIAPJS_setListener : wrong number of arguments");
+    JS_ReportErrorUTF8(cx, "js_PluginIAPJS_setListener : wrong number of arguments");
     return false;
 }
 
 #if defined(MOZJS_MAJOR_VERSION)
-bool js_PluginIAPJS_IAP_getProducts(JSContext *cx, uint32_t argc, jsval *vp)
+bool js_PluginIAPJS_IAP_getProducts(JSContext *cx, uint32_t argc, JS::Value *vp)
 {
     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
     if (argc == 0) {
         std::vector<sdkbox::Product> ret = sdkbox::IAP::getProducts();
-        jsval jsret = std_vector_product_to_jsval(cx, ret);
-        args.rval().set(jsret);
+        JS::RootedObject products(cx);
+        std_vector_product_to_jsval(cx, ret, &products);
+        args.rval().set(JS::ObjectValue(*products.get()));
         return true;
     }
-    JS_ReportError(cx, "js_PluginIAPJS_IAP_getProducts : wrong number of arguments");
+    JS_ReportErrorUTF8(cx, "js_PluginIAPJS_IAP_getProducts : wrong number of arguments");
     return false;
 }
 #elif defined(JS_VERSION)
@@ -391,7 +410,7 @@ JSBool js_PluginIAPJS_IAP_getProducts(JSContext *cx, uint32_t argc, jsval *vp)
         JS_SET_RVAL(cx, vp, jsret);
         return JS_TRUE;
     }
-    JS_ReportError(cx, "wrong number of arguments");
+    JS_ReportErrorUTF8(cx, "wrong number of arguments");
     return JS_FALSE;
 }
 #endif
