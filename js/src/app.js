@@ -38,6 +38,7 @@ var HelloWorldLayer = cc.Layer.extend({
         self.log("title=", p.title);
         self.log("description=", p.description);
         self.log("price=", p.price);
+        self.log("priceValue=", p.priceValue);
         self.log("currencyCode=", p.currencyCode);
         self.log("receipt=", p.receipt);
         self.log("receiptCipheredPayload=", p.receiptCipheredPayload);
@@ -83,6 +84,7 @@ var HelloWorldLayer = cc.Layer.extend({
                     self.log("================");
                     self.log("name: " + products[i].name);
                     self.log("price: " + products[i].price);
+                    self.log("priceValue: " + products[i].priceValue);
                     self.log("================");
 
                     (function() {

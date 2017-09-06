@@ -19,6 +19,7 @@ void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleOb
     JS::RootedValue title(cx);
     JS::RootedValue description(cx);
     JS::RootedValue price(cx);
+    JS::RootedValue priceValue(cx);
     JS::RootedValue currencyCode(cx);
     JS::RootedValue receipt(cx);
     JS::RootedValue receiptCipheredPayload(cx);
@@ -33,8 +34,14 @@ void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleOb
     JS_SetProperty(cx, jsobj, "title", title);
     description = SB_STR_TO_JSVAL(cx, p.description);
     JS_SetProperty(cx, jsobj, "description", description);
+
+    cocos2d::log(">>>>>>>>[%s]", p.price.c_str());
+
     price = SB_STR_TO_JSVAL(cx, p.price);
     JS_SetProperty(cx, jsobj, "price", price);
+    double tmp = p.priceValue;
+    priceValue = JS::DoubleValue(tmp);
+    JS_SetProperty(cx, jsobj, "priceValue", priceValue);
     currencyCode = SB_STR_TO_JSVAL(cx, p.currencyCode);
     JS_SetProperty(cx, jsobj, "currencyCode", currencyCode);
     receipt = SB_STR_TO_JSVAL(cx, p.receipt);
@@ -52,6 +59,7 @@ void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleOb
     JS::RootedValue title(cx);
     JS::RootedValue description(cx);
     JS::RootedValue price(cx);
+    JS::RootedValue priceValue(cx);
     JS::RootedValue currencyCode(cx);
     JS::RootedValue receipt(cx);
     JS::RootedValue receiptCipheredPayload(cx);
@@ -68,6 +76,8 @@ void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleOb
     JS_SetProperty(cx, jsobj, "description", description);
     price = SB_STR_TO_JSVAL(cx, p.price);
     JS_SetProperty(cx, jsobj, "price", price);
+    priceValue = JS::DoubleValue(p.priceValue);
+    JS_SetProperty(cx, jsobj, "priceValue", priceValue);
     currencyCode = SB_STR_TO_JSVAL(cx, p.currencyCode);
     JS_SetProperty(cx, jsobj, "currencyCode", currencyCode);
     receipt = SB_STR_TO_JSVAL(cx, p.receipt);
@@ -85,6 +95,7 @@ void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleOb
     jsval title;
     jsval description;
     jsval price;
+    jsval priceValue;
     jsval currencyCode;
     jsval receipt;
     jsval receiptCipheredPayload;
@@ -101,6 +112,8 @@ void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleOb
     JS_SetProperty(cx, jsobj, "description", &description);
     price = SB_STR_TO_JSVAL(cx, p.price);
     JS_SetProperty(cx, jsobj, "price", &price);
+    priceValue = JS::DoubleValue(p.priceValue);
+    JS_SetProperty(cx, jsobj, "priceValue", priceValue);
     currencyCode = SB_STR_TO_JSVAL(cx, p.currencyCode);
     JS_SetProperty(cx, jsobj, "currencyCode", &currencyCode);
     receipt = SB_STR_TO_JSVAL(cx, p.receipt);
