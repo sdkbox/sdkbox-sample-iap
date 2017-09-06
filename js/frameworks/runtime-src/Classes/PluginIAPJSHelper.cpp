@@ -35,9 +35,10 @@ void product_to_obj(JSContext* cx, const sdkbox::Product& p, JS::MutableHandleOb
     description = SB_STR_TO_JSVAL(cx, p.description);
     JS_SetProperty(cx, jsobj, "description", description);
 
-    cocos2d::log(">>>>>>>>[%s]", p.price.c_str());
 
-    price = SB_STR_TO_JSVAL(cx, p.price);
+    const jschar *chars = (const jschar*)cocos2d::cc_utf8_to_utf16(p.price.c_str());
+    price = JS::StringValue(JS_NewUCStringCopyZ(cx, chars));
+
     JS_SetProperty(cx, jsobj, "price", price);
     double tmp = p.priceValue;
     priceValue = JS::DoubleValue(tmp);
