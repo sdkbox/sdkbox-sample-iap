@@ -101,7 +101,23 @@ var HelloWorldLayer = cc.Layer.extend({
             onProductRequestFailure : function (msg) {
                 //When product refresh request fails.
                 self.log("Failed to get products");
-            }
+            },
+            onShouldAddStorePayment: function(productId) {
+                self.log("onShouldAddStorePayment:" + productId);
+                return true;
+            },
+            onFetchStorePromotionOrder : function (productIds, error) {
+                self.log("onFetchStorePromotionOrder:" + " " + " e:" + error);
+            },
+            onFetchStorePromotionVisibility : function (productId, visibility, error) {
+                self.log("onFetchStorePromotionVisibility:" + productId + " v:" + visibility + " e:" + error);
+            },
+            onUpdateStorePromotionOrder : function (error) {
+                self.log("onUpdateStorePromotionOrder:" + error);
+            },
+            onUpdateStorePromotionVisibility : function (error) {
+                self.log("onUpdateStorePromotionVisibility:" + error);
+            },
         });
 
         var size = cc.winSize;
@@ -112,6 +128,13 @@ var HelloWorldLayer = cc.Layer.extend({
 
         var btnRestore = new cc.MenuItemFont("restore purchase", function(){
           sdkbox.IAP.restore();
+        });
+
+        var btnPromoteSetting = new cc.MenuItemFont("promote setting", function(){
+            // sdkbox.IAP.fetchStorePromotionOrder();
+            // sdkbox.IAP.updateStorePromotionOrder(["remove_ads"]);
+            // sdkbox.IAP.fetchStorePromotionVisibility("remove_ads");
+            // sdkbox.IAP.updateStorePromotionVisibility("remove_ads", true);
         });
 
         var menu = new cc.Menu(btnLoad, btnRestore);
