@@ -26,7 +26,14 @@ function MainScene:setupTestMenu()
     end)
 
     local btnRestore = cc.MenuItemFont:create("restore purchase"):onClicked(function()
-        sdkbox.IAP:restore();
+        sdkbox.IAP:restore()
+    end)
+
+    local btnPromote = cc.MenuItemFont:create("promote setting"):onClicked(function()
+        -- sdkbox.IAP:fetchStorePromotionOrder()
+        -- sdkbox.IAP:updateStorePromotionOrder({"remove_ads"})
+        -- sdkbox.IAP:fetchStorePromotionVisibility("remove_ads")
+        -- sdkbox.IAP:updateStorePromotionVisibility("remove_ads", true)
     end)
 
     local menu = cc.Menu:create(btnLoad, btnRestore)
@@ -76,6 +83,17 @@ function MainScene:setupTestMenu()
         elseif "onProductRequestFailure" == args.event then
                 local msg = args.msg
                 print("msg:", msg)
+        elseif 'onShouldAddStorePayment' == args.event then
+            dump(args, 'onShouldAddStorePayment:')
+            return 'kddkf'
+        elseif 'onFetchStorePromotionOrder' == args.event then
+                dump(args, 'onFetchStorePromotionOrder:')
+        elseif 'onFetchStorePromotionVisibility' == args.event then
+            dump(args, 'onFetchStorePromotionVisibility:')
+        elseif 'onUpdateStorePromotionOrder' == args.event then
+            dump(args, 'onUpdateStorePromotionOrder:')
+        elseif 'onUpdateStorePromotionVisibility' == args.event then
+            dump(args, 'onUpdateStorePromotionVisibility:')
         else
                 print("unknown event ", args.event)
         end
