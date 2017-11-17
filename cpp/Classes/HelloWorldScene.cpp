@@ -96,7 +96,7 @@ void HelloWorld::onRestoreIAP(cocos2d::Ref* sender)
 
 void HelloWorld::onIAP(cocos2d::Ref *sender)
 {
-    int i = reinterpret_cast<int>(dynamic_cast<MenuItemFont*>(sender)->getUserData());
+    int i = dynamic_cast<MenuItemFont*>(sender)->getTag();
     auto const &product = _products[i];
     CCLOG("Start IAP %s", product.name.c_str());
     IAP::purchase(product.name);
@@ -171,7 +171,7 @@ void HelloWorld::updateIAP(const std::vector<sdkbox::Product>& products)
         CCLOG("IAP: Currency: %s", _products[i].currencyCode.c_str());
 
         auto item = MenuItemFont::create(_products[i].name, CC_CALLBACK_1(HelloWorld::onIAP, this));
-        item->setUserData(reinterpret_cast<void*>(i));
+        item->setTag(i);
         _iapMenu->addChild(item);
     }
 
