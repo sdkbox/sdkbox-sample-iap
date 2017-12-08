@@ -28,8 +28,10 @@ If the setup script runs correctly the folder structure should look like this
 
 ### Test IAP for android
 
-* To test Android IAP you need to opt-in as an alpha tester [here](https://play.google.com/apps/testing/org.cocos2dx.PluginTest)
-* You can only test IAP in release build
+1. To test Android IAP you need to opt-in as an alpha tester [here](https://play.google.com/apps/testing/org.cocos2dx.PluginTest)
+2. You can only test IAP in release build
+3. Replace the [key](https://github.com/sdkbox/sdkbox-sample-iap/blob/master/cpp/Resources/sdkbox_config.json#L20) with your key. In [https://play.google.com/apps/publish/](https://play.google.com/apps/publish/), open your game, follow menu "Development tools -> Services & APIs -> in-app billing"
+
 Run the following command
 ```
 cocos run -p android -m release
