@@ -4,6 +4,9 @@
 USING_NS_CC;
 using namespace sdkbox;
 
+#define SCREENLOG_IMPLEMENTATION
+#include "ScreenLog.h"
+
 template <typename T> std::string tostr(const T& t) { std::ostringstream os; os<<t; return os.str(); }
 
 Scene* HelloWorld::createScene()
@@ -16,6 +19,10 @@ Scene* HelloWorld::createScene()
 
     // add layer as a child to scene
     scene->addChild(layer);
+
+    ScreenLog::getInstance()->setLevelMask( LL_DEBUG | LL_INFO | LL_WARNING | LL_ERROR | LL_FATAL );
+    ScreenLog::getInstance()->setTimeoutSeconds( 0xFFFF );
+    ScreenLog::getInstance()->attachToScene( scene );
 
     // return the scene
     return scene;
@@ -31,7 +38,7 @@ bool HelloWorld::init()
         return false;
     }
 
-    CCLOG("Sample Startup");
+    INFO("Sample Startup");
 
     // add logo
     auto winsize = Director::getInstance()->getWinSize();
@@ -98,59 +105,59 @@ void HelloWorld::onIAP(cocos2d::Ref *sender)
 {
     int i = dynamic_cast<MenuItemFont*>(sender)->getTag();
     auto const &product = _products[i];
-    CCLOG("Start IAP %s", product.name.c_str());
+    INFO("Start IAP %s", product.name.c_str());
     IAP::purchase(product.name);
 }
 
 void HelloWorld::onInitialized(bool ok)
 {
-    CCLOG("%s : %d", __func__, ok);
+    INFO("%s : %d", __func__, ok);
 }
 
 void HelloWorld::onSuccess(const Product &p)
 {
     if (p.name == "coin_package") {
-        CCLOG("Purchase complete: coin_package");
+        INFO("Purchase complete: coin_package");
         _coinCount += 1000;
         _txtCoin->setString(tostr(_coinCount));
     }
     else if (p.name == "coin_package2") {
-        CCLOG("Purchase complete: coin_package2");
+        INFO("Purchase complete: coin_package2");
         _coinCount += 5000;
         _txtCoin->setString(tostr(_coinCount));
     }
     else if (p.name == "remove_ads") {
-        CCLOG("Purchase complete: Remove Ads");
+        INFO("Purchase complete: Remove Ads");
     }
 
-    CCLOG("Purchase Success: %s", p.id.c_str());
-    
-    CCLOG("IAP: ========= IAP Item =========");
-    CCLOG("IAP: Name: %s", p.name.c_str());
-    CCLOG("IAP: ID: %s", p.id.c_str());
-    CCLOG("IAP: Title: %s", p.title.c_str());
-    CCLOG("IAP: Desc: %s", p.description.c_str());
-    CCLOG("IAP: Price: %s", p.price.c_str());
-    CCLOG("IAP: Price Value: %f", p.priceValue);
-    CCLOG("IAP: Currency: %s", p.currencyCode.c_str());
-    CCLOG("IAP: transactionID: %s", p.transactionID.c_str());
-    CCLOG("IAP: receipt: %s", p.receipt.c_str());
-    CCLOG("IAP: receipt data: %s", p.receiptCipheredPayload.c_str());
+    INFO("Purchase Success: %s", p.id.c_str());
+
+    INFO("IAP: ========= IAP Item =========");
+    INFO("IAP: Name: %s", p.name.c_str());
+    INFO("IAP: ID: %s", p.id.c_str());
+    INFO("IAP: Title: %s", p.title.c_str());
+    INFO("IAP: Desc: %s", p.description.c_str());
+    INFO("IAP: Price: %s", p.price.c_str());
+    INFO("IAP: Price Value: %f", p.priceValue);
+    INFO("IAP: Currency: %s", p.currencyCode.c_str());
+    INFO("IAP: transactionID: %s", p.transactionID.c_str());
+    INFO("IAP: receipt: %s", p.receipt.c_str());
+    INFO("IAP: receipt data: %s", p.receiptCipheredPayload.c_str());
 }
 
 void HelloWorld::onFailure(const Product &p, const std::string &msg)
 {
-    CCLOG("Purchase Failed: %s", msg.c_str());
+    INFO("Purchase Failed: %s", msg.c_str());
 }
 
 void HelloWorld::onCanceled(const Product &p)
 {
-    CCLOG("Purchase Canceled: %s", p.id.c_str());
+    INFO("Purchase Canceled: %s", p.id.c_str());
 }
 
 void HelloWorld::onRestored(const Product& p)
 {
-    CCLOG("Purchase Restored: %s", p.name.c_str());
+    INFO("Purchase Restored: %s", p.name.c_str());
 }
 
 void HelloWorld::updateIAP(const std::vector<sdkbox::Product>& products)
@@ -161,14 +168,14 @@ void HelloWorld::updateIAP(const std::vector<sdkbox::Product>& products)
 
     for (int i=0; i < _products.size(); i++)
     {
-        CCLOG("IAP: ========= IAP Item =========");
-        CCLOG("IAP: Name: %s", _products[i].name.c_str());
-        CCLOG("IAP: ID: %s", _products[i].id.c_str());
-        CCLOG("IAP: Title: %s", _products[i].title.c_str());
-        CCLOG("IAP: Desc: %s", _products[i].description.c_str());
-        CCLOG("IAP: Price: %s", _products[i].price.c_str());
-        CCLOG("IAP: Price Value: %f", _products[i].priceValue);
-        CCLOG("IAP: Currency: %s", _products[i].currencyCode.c_str());
+        INFO("IAP: ========= IAP Item =========");
+        INFO("IAP: Name: %s", _products[i].name.c_str());
+        INFO("IAP: ID: %s", _products[i].id.c_str());
+        INFO("IAP: Title: %s", _products[i].title.c_str());
+        INFO("IAP: Desc: %s", _products[i].description.c_str());
+        INFO("IAP: Price: %s", _products[i].price.c_str());
+        INFO("IAP: Price Value: %f", _products[i].priceValue);
+        INFO("IAP: Currency: %s", _products[i].currencyCode.c_str());
 
         auto item = MenuItemFont::create(_products[i].name, CC_CALLBACK_1(HelloWorld::onIAP, this));
         item->setTag(i);
@@ -187,10 +194,10 @@ void HelloWorld::onProductRequestSuccess(const std::vector<Product> &products)
 
 void HelloWorld::onProductRequestFailure(const std::string &msg)
 {
-    CCLOG("Fail to load products");
+    INFO("Fail to load products");
 }
 
 void HelloWorld::onRestoreComplete(bool ok, const std::string &msg)
 {
-    CCLOG("%s:%d:%s", __func__, ok, msg.data());
+    INFO("%s:%d:%s", __func__, ok, msg.data());
 }
