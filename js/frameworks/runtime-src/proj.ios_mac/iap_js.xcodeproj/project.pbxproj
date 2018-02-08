@@ -201,6 +201,14 @@
 			name = Icons;
 			sourceTree = "<group>";
 		};
+		846FA04A202C3C5900CD826C /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				BA4E718619EB6E7900932425 /* MediaPlayer.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		9FFEB99E1A6AB7F70095C43A /* ide-support */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,6 +232,7 @@
 				A922753E1517C094001B78AA /* Products */,
 				15628F5B15F0F5C2000CF24B /* Resources */,
 				B2C749EAA329864FCB8D27C7 /* ios-libs */,
+				846FA04A202C3C5900CD826C /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -497,6 +506,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				DEVELOPMENT_TEAM = LNN652W6T6;
@@ -536,6 +546,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				DEVELOPMENT_TEAM = LNN652W6T6;
