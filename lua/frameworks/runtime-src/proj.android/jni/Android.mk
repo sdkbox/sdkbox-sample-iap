@@ -6,12 +6,22 @@ LOCAL_MODULE := cocos2dlua_shared
 
 LOCAL_MODULE_FILENAME := libcocos2dlua
 
-LOCAL_SRC_FILES := ../../Classes/AppDelegate.cpp ../../Classes/ide-support/SimpleConfigParser.cpp ../../Classes/ide-support/RuntimeLuaImpl.cpp ../../Classes/ide-support/lua_debugger.c hellolua/main.cpp ../../Classes/PluginIAPLua.cpp ../../Classes/PluginIAPLuaHelper.cpp ../../Classes/SDKBoxLuaHelper.cpp
+LOCAL_SRC_FILES := ../../Classes/AppDelegate.cpp \
+../../Classes/ide-support/SimpleConfigParser.cpp \
+../../Classes/ide-support/RuntimeLuaImpl.cpp \
+../../Classes/ide-support/lua_debugger.c \
+hellolua/main.cpp \
+../../Classes/PluginIAPLua.cpp \
+../../Classes/PluginIAPLuaHelper.cpp \
+../../Classes/SDKBoxLuaHelper.cpp
 
 LOCAL_CPPFLAGS := -DSDKBOX_ENABLED
-LOCAL_LDLIBS := -landroid -llog
+LOCAL_LDLIBS := -landroid \
+-llog
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
-LOCAL_WHOLE_STATIC_LIBRARIES := PluginIAP sdkbox android_native_app_glue
+LOCAL_WHOLE_STATIC_LIBRARIES := PluginIAP \
+sdkbox \
+android_native_app_glue
 
 # _COCOS_HEADER_ANDROID_BEGIN
 # _COCOS_HEADER_ANDROID_END

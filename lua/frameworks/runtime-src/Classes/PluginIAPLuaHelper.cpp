@@ -22,7 +22,7 @@ public:
 
     void start() {
         CCDirector::sharedDirector()->getScheduler()
-            ->scheduleSelector(schedule_selector(LuaIAPCallbackObj::callback), this, 0.1, false);
+            ->scheduleSelector(schedule_selector(LuaIAPCallbackObj::callback), this, 0.1, 0, 0.0f, false);
     }
 
     void callback(float dt) {
@@ -30,7 +30,6 @@ public:
         stack->pushLuaValueDict(_luaValueDict);
         stack->executeFunctionByHandler(_luaHandler, 1);
 
-        CCDirector::sharedDirector()->getScheduler()->unscheduleAllForTarget(this);
         release();
     }
 
@@ -129,6 +128,53 @@ public:
         LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
     }
 
+    bool onShouldAddStorePayment(const std::string& productId) {
+        LuaValueDict dict;
+
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onShouldAddStorePayment")));
+        dict.insert(std::make_pair("productId", LuaValue::stringValue(productId)));
+
+        LuaStack* stack = LUAENGINE->getLuaStack();
+        stack->pushLuaValueDict(dict);
+        return (bool)stack->executeFunctionByHandler(mLuaHandler, 1);
+    }
+
+    void onFetchStorePromotionOrder(const std::vector<std::string>& productIds, const std::string& error) {
+        LuaValueDict dict;
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onFetchStorePromotionOrder")));
+
+        std::vector<std::string>::const_iterator it;
+        LuaValueArray arrLua;
+        for (it = productIds.begin(); it != productIds.end(); it++) {
+            arrLua.push_back(LuaValue::stringValue(*it));
+        }
+        dict.insert(std::make_pair("productIds", LuaValue::arrayValue(arrLua)));
+        dict.insert(std::make_pair("error", LuaValue::stringValue(error)));
+        LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
+    }
+
+    void onFetchStorePromotionVisibility(const std::string productId, bool visibility, const std::string& error) {
+        LuaValueDict dict;
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onFetchStorePromotionVisibility")));
+        dict.insert(std::make_pair("productId", LuaValue::stringValue(productId)));
+        dict.insert(std::make_pair("visibility", LuaValue::booleanValue(visibility)));
+        dict.insert(std::make_pair("error", LuaValue::stringValue(error)));
+        LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
+    }
+
+    void onUpdateStorePromotionOrder(const std::string& error) {
+        LuaValueDict dict;
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onUpdateStorePromotionOrder")));
+        dict.insert(std::make_pair("error", LuaValue::stringValue(error)));
+        LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
+    }
+
+    void onUpdateStorePromotionVisibility(const std::string& error) {
+        LuaValueDict dict;
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onUpdateStorePromotionVisibility")));
+        dict.insert(std::make_pair("error", LuaValue::stringValue(error)));
+        LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
+    }
 
 public:
 
@@ -143,6 +189,7 @@ public:
         dicLua.insert(std::make_pair("receipt", LuaValue::stringValue(p.receipt)));
         dicLua.insert(std::make_pair("receiptCipheredPayload", LuaValue::stringValue(p.receiptCipheredPayload)));
         dicLua.insert(std::make_pair("priceValue", LuaValue::floatValue(p.priceValue)));
+        dicLua.insert(std::make_pair("transactionID", LuaValue::stringValue(p.transactionID)));
         switch (p.type) {
             case sdkbox::IAP_Type::CONSUMABLE: {
                 dicLua.insert(std::make_pair("type", LuaValue::stringValue("CONSUMABLE")));

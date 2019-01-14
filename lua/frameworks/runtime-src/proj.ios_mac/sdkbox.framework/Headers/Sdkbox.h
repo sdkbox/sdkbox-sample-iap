@@ -7,7 +7,7 @@
 #ifndef _CC_SDKBOX_H_
 #define _CC_SDKBOX_H_
 
-#define SDKBOX_VERSION_STR  "sdkbox V2.3.4.4"
+#define SDKBOX_VERSION_STR  "sdkbox V2.4.3.0"
 
 /**
  * Only certain compilers support __attribute__((deprecated)).
@@ -38,6 +38,29 @@ namespace sdkbox {
     void sessionStart();
     void sessionEnd();
 
+    /*
+     *
+     * if the whole config file content is:
+     * {
+     *   "ios": {
+     *      "AdColony": {
+     *          "appid": "123"
+     *      }
+     *   },
+     *   "android": {
+     *      "AdMob": {}
+     *   }
+     * }
+     *
+     * getConfig() will return "{"AdColony":{"appid": "123"}}" if on ios platform, return "{"AdMob":{}}" if on android platform
+     * getConfig("AdColony") will return "{"appid": "123"}" if on ios platform, return "" if on android platform
+     *
+     * setConfig(jsonstring), jsonstring must include ios and android config, e.g.: { "ios": {"AdColony": "appid": "123"}, "android": {"AdMob": {}}}
+     *
+     *
+     */
+    std::string getConfig(const std::string pluginName = "");
+    void setConfig(const std::string jsonConfig);
 
     enum AdActionType {
 
@@ -82,7 +105,7 @@ namespace sdkbox {
         Platform_Facebook = 2,
         Platform_SMS = 5,
         Platform_Mail = 6,
-        //Platform_EMail = Platform_Mail,
+        Platform_Native = 7,
 
         Platform_Select = 3,
         Platform_All = 4

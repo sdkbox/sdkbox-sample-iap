@@ -21,6 +21,10 @@ namespace sdkbox
     // Product from SDKBox In App Purchase
     struct Product
     {
+        Product() : name(""), id(""), title(""), description(""),
+        priceValue(0), price(""), currencyCode(""), receiptCipheredPayload(""),
+        receipt(""), transactionID("") {}
+
         // The name specified in sdkbox_config.json
         std::string name;
 
@@ -51,7 +55,7 @@ namespace sdkbox
         // receipt info. will be empty string for iOS
         std::string receipt;
 
-        // unique transaction id
+        // unique                     id
         std::string transactionID;
     };
 
@@ -102,6 +106,13 @@ namespace sdkbox
          */
         virtual void onRestoreComplete(bool ok, const std::string &msg) = 0;
 
+        virtual bool onShouldAddStorePayment(const std::string& productName) { return true; };
+        virtual void onFetchStorePromotionOrder(const std::vector<std::string>& productNames, const std::string& error) {};
+        virtual void onFetchStorePromotionVisibility(const std::string productName, bool visibility, const std::string& error) {};
+        virtual void onUpdateStorePromotionOrder(const std::string& error) {};
+        virtual void onUpdateStorePromotionVisibility(const std::string& error) {};
+
+        virtual void onPurchaseHistory(const std::string& purchases) {};
     };
 
     class IAP
@@ -150,9 +161,33 @@ namespace sdkbox
         */
         static void removeListener();
 
-
         static void enableUserSideVerification( bool );
 
+        /**
+         * get auto invoke finishTransaction flag
+         */
+        static bool isAutoFinishTransaction();
+
+        /**
+         * set auto invoke finishTransaction flag
+         */
+        static void setAutoFinishTransaction(bool b);
+
+        /**
+         * to invoke ios finishTransaction api
+         */
+        static void finishTransaction(const std::string productid);
+
+        static void fetchStorePromotionOrder();
+        static void updateStorePromotionOrder(const std::vector<std::string>& productNames);
+        static void fetchStorePromotionVisibility(const std::string& productName);
+        static void updateStorePromotionVisibility(const std::string& productName, bool visibility);
+
+
+        /*
+         * get all purchase history, include cancelled, expired
+         */
+        static void getPurchaseHistory();
     };
 }
 
