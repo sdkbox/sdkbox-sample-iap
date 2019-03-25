@@ -38,7 +38,7 @@ $(call import-add-path, $(LOCAL_PATH))
 $(call import-module,scripting/lua-bindings/proj.android/prebuilt-mk)
 $(call import-module,tools/simulator/libsimulator/proj.android/prebuilt-mk)
 $(call import-module, ./sdkbox)
-$(call import-module, ./pluginiap)
+$(call import-module, ./PluginIAP)
 
 # _COCOS_LIB_IMPORT_ANDROID_BEGIN
 # _COCOS_LIB_IMPORT_ANDROID_END

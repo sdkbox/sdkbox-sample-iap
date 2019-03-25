@@ -760,3 +760,168 @@ bool luatable_to_map_string_string(lua_State* L, int lo, std::map<std::string,st
 
 
 
+//
+// export sdkbox function
+//
+
+int lua_sdkbox_init(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+    
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+    
+    argc = lua_gettop(tolua_S);
+    
+    if (argc == 2)
+    {
+        std::string arg0, arg1;
+        ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sdkbox.init");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_sdkbox_init'", nullptr);
+            return 0;
+        }
+        ok &= luaval_to_std_string(tolua_S, 2,&arg1, "sdkbox.init");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_sdkbox_init'", nullptr);
+            return 0;
+        }
+        sdkbox::init(arg0.c_str(), arg1.c_str());
+//        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "sdkbox.init",argc, 1);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_sdkbox_init'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int lua_sdkbox_getConfig(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+    
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+    
+    argc = lua_gettop(tolua_S);
+    
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_sdkbox_getConfig'", nullptr);
+            return 0;
+        }
+        std::string ret = sdkbox::getConfig();
+        tolua_pushcppstring(tolua_S,ret);
+        return 1;
+    }
+    else if (argc == 1)
+    {
+        std::string arg0;
+        ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sdkbox.getConfig");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_sdkbox_getConfig'", nullptr);
+            return 0;
+        }
+        std::string ret = sdkbox::getConfig(arg0);
+        tolua_pushcppstring(tolua_S,ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "sdkbox.getConfig",argc, 0);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_sdkbox_getConfig'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int lua_sdkbox_setConfig(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+    
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+    
+    argc = lua_gettop(tolua_S);
+    
+    if (argc == 1)
+    {
+        std::string arg0;
+        ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sdkbox.setConfig");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_sdkbox_setConfig'", nullptr);
+            return 0;
+        }
+        sdkbox::setConfig(arg0);
+//        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "sdkbox.setConfig",argc, 1);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_sdkbox_setConfig'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int register_all_sdkbox(lua_State* tolua_S)
+{
+    tolua_open(tolua_S);
+    
+    std::stringstream ss("sdkbox");
+    std::vector<std::string> nsvec;
+    std::string item;
+    while (std::getline(ss, item, '.')) {
+        nsvec.push_back(item);
+    }
+    int nsLen = nsvec.size();
+    item = nsvec.front();
+    nsvec.erase(nsvec.begin());
+    
+    tolua_module(tolua_S, item.c_str(), 0);
+    tolua_beginmodule(tolua_S, item.c_str());
+    
+    while (nsvec.size() > 0) {
+        item = nsvec.front();
+        nsvec.erase(nsvec.begin());
+        lua_pushstring(tolua_S, item.c_str()); // m name
+        lua_rawget(tolua_S, -2);             // m value
+        if (!lua_istable(tolua_S, -1)) {
+            lua_pop(tolua_S, 1);             // m
+            lua_newtable(tolua_S);           // m t
+            lua_pushstring(tolua_S, item.c_str()); // m t name
+            lua_pushvalue(tolua_S, -2);      // m t name t
+            lua_rawset(tolua_S, -4);         // m t
+        }
+    }
+    
+    
+    
+    tolua_function(tolua_S,"init", lua_sdkbox_init);
+    tolua_function(tolua_S,"getConfig", lua_sdkbox_getConfig);
+    tolua_function(tolua_S,"setConfig", lua_sdkbox_setConfig);
+    
+    
+    if (nsLen > 1) {
+        lua_pop(tolua_S, nsLen - 1); // m
+    }
+    tolua_endmodule(tolua_S);
+    
+    return 1;
+}

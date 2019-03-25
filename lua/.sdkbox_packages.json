@@ -26,13 +26,13 @@
             2, 
             4, 
             3, 
-            0
+            3
         ], 
         "result": "ok", 
         "message": "success", 
         "constants": {
             "ANDROID_STUDIO_JNI_DIR": "n/a", 
-            "COCOS_BACKUP_DIR": "backup-2019-01-14/", 
+            "COCOS_BACKUP_DIR": "backup-2019-03-25/", 
             "COCOS_PROJECT_DIR": "./", 
             "VS_PROJECT_DIR": "n/a", 
             "COCOS_2DX_INSTALLATION_VERSION": "3.8.0", 
@@ -100,13 +100,13 @@
             2, 
             4, 
             3, 
-            0
+            3
         ], 
         "result": "ok", 
         "message": "success", 
         "constants": {
             "ANDROID_STUDIO_JNI_DIR": "n/a", 
-            "COCOS_BACKUP_DIR": "backup-2019-01-14/", 
+            "COCOS_BACKUP_DIR": "backup-2019-03-25/", 
             "remove_jar": "frameworks/runtime-src/proj.android/libs/PluginGooglePlay.jar/", 
             "VS_PROJECT_DIR": "n/a", 
             "COCOS_2DX_INSTALLATION_VERSION": "3.8.0", 

@@ -41,6 +41,40 @@ int lua_PluginIAPLua_IAP_purchase(lua_State* tolua_S)
 #endif
     return 0;
 }
+int lua_PluginIAPLua_IAP_getInitializedErrMsg(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"sdkbox.IAP",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_PluginIAPLua_IAP_getInitializedErrMsg'", nullptr);
+            return 0;
+        }
+        std::string ret = sdkbox::IAP::getInitializedErrMsg();
+        tolua_pushcppstring(tolua_S,ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "sdkbox.IAP:getInitializedErrMsg",argc, 0);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_PluginIAPLua_IAP_getInitializedErrMsg'.",&tolua_err);
+#endif
+    return 0;
+}
 int lua_PluginIAPLua_IAP_updateStorePromotionVisibility(lua_State* tolua_S)
 {
     int argc = 0;
@@ -440,6 +474,40 @@ int lua_PluginIAPLua_IAP_setDebug(lua_State* tolua_S)
 #endif
     return 0;
 }
+int lua_PluginIAPLua_IAP_requestUpdateTransaction(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"sdkbox.IAP",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_PluginIAPLua_IAP_requestUpdateTransaction'", nullptr);
+            return 0;
+        }
+        sdkbox::IAP::requestUpdateTransaction();
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "sdkbox.IAP:requestUpdateTransaction",argc, 0);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_PluginIAPLua_IAP_requestUpdateTransaction'.",&tolua_err);
+#endif
+    return 0;
+}
 int lua_PluginIAPLua_IAP_enableUserSideVerification(lua_State* tolua_S)
 {
     int argc = 0;
@@ -559,6 +627,7 @@ int lua_register_PluginIAPLua_IAP(lua_State* tolua_S)
 
     tolua_beginmodule(tolua_S,"IAP");
         tolua_function(tolua_S,"purchase", lua_PluginIAPLua_IAP_purchase);
+        tolua_function(tolua_S,"getInitializedErrMsg", lua_PluginIAPLua_IAP_getInitializedErrMsg);
         tolua_function(tolua_S,"updateStorePromotionVisibility", lua_PluginIAPLua_IAP_updateStorePromotionVisibility);
         tolua_function(tolua_S,"updateStorePromotionOrder", lua_PluginIAPLua_IAP_updateStorePromotionOrder);
         tolua_function(tolua_S,"restore", lua_PluginIAPLua_IAP_restore);
@@ -570,6 +639,7 @@ int lua_register_PluginIAPLua_IAP(lua_State* tolua_S)
         tolua_function(tolua_S,"getPurchaseHistory", lua_PluginIAPLua_IAP_getPurchaseHistory);
         tolua_function(tolua_S,"init", lua_PluginIAPLua_IAP_init);
         tolua_function(tolua_S,"setDebug", lua_PluginIAPLua_IAP_setDebug);
+        tolua_function(tolua_S,"requestUpdateTransaction", lua_PluginIAPLua_IAP_requestUpdateTransaction);
         tolua_function(tolua_S,"enableUserSideVerification", lua_PluginIAPLua_IAP_enableUserSideVerification);
         tolua_function(tolua_S,"finishTransaction", lua_PluginIAPLua_IAP_finishTransaction);
         tolua_function(tolua_S,"removeListener", lua_PluginIAPLua_IAP_removeListener);

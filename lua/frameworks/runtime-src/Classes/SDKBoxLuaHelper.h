@@ -106,4 +106,19 @@ extern bool luaval_to_std_map_string_string(lua_State* L, int lo, std::map<std::
 
 bool luatable_to_map_string_string(lua_State* L, int lo, std::map<std::string,std::string>* ret, const char* funcName);
 
+
+// export sdkbox function
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "tolua++.h"
+#ifdef __cplusplus
+}
+#endif
+
+int register_all_sdkbox(lua_State* tolua_S);
+
+
+
 #endif //__SDKBOX_LUA_HELPER_H__

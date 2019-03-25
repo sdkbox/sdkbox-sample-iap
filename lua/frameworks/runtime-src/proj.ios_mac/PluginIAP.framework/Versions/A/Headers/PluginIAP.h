@@ -113,6 +113,22 @@ namespace sdkbox
         virtual void onUpdateStorePromotionVisibility(const std::string& error) {};
 
         virtual void onPurchaseHistory(const std::string& purchases) {};
+
+        /**
+         * Called when consume completed, just trigger on android
+         */
+        virtual void onConsumed(const Product& p, const std::string& error) {};
+        
+        /**
+         * Called when IAP pay deferred
+         *
+         * Note: Pay deferred status is a middle status, for most developer, needn't case this status
+         * this status will change to success or failed or cancel, its final status is pending external action.
+         *
+         * Please DO NOT finishTransaction when status is deferred.
+         *
+         */
+        virtual void onDeferred(const Product& p) {};
     };
 
     class IAP
@@ -188,6 +204,23 @@ namespace sdkbox
          * get all purchase history, include cancelled, expired
          */
         static void getPurchaseHistory();
+
+        /**
+         * get initialized error message
+         */
+        static std::string getInitializedErrMsg();
+
+        /*
+         * request all unfinish transaction, and retrigger onSuccess, onFailed or onCancel event with corresponding transaction.
+         * just valid on iOS
+         *
+         * e.g. if there have two transaction (one is success, on is canceled) havn't been finish,
+         *      after invoke requestUpdateTransaction, onSuccess will trigger with the success transaction, onCancelled will trigger with the cancelled transaction.
+         *
+         * Note: for most developer, this api is needn't, onSuccess, onFailed or onCancel will auto trigger when transaction updated.
+         *
+         */
+        static void requestUpdateTransaction();
     };
 }
 
