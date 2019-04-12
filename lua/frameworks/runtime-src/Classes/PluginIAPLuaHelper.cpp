@@ -176,6 +176,28 @@ public:
         LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
     }
 
+    void onPurchaseHistory(const std::string& purchases) {
+        LuaValueDict dict;
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onPurchaseHistory")));
+        dict.insert(std::make_pair("purchases", LuaValue::stringValue(purchases)));
+        LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
+    }
+
+    void onConsumed(const sdkbox::Product& p, const std::string& error) {
+        LuaValueDict dict;
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onConsumed")));
+        dict.insert(std::make_pair("product", prouct2LuaValue(p)));
+        dict.insert(std::make_pair("error", LuaValue::stringValue(error)));
+        LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
+    }
+
+    void onDeferred(const sdkbox::Product& p) {
+        LuaValueDict dict;
+        dict.insert(std::make_pair("event", LuaValue::stringValue("onDeferred")));
+        dict.insert(std::make_pair("product", prouct2LuaValue(p)));
+        LuaIAPCallbackObj::create(mLuaHandler)->setLuaDict(dict)->start();
+    }
+
 public:
 
     static LuaValue prouct2LuaValue(const sdkbox::Product& p) {
